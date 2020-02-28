@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import React from "react";
 import Row from "react-bootstrap/Row";
+import { Link } from 'react-router-dom';
 
 function Login() {
   return (
@@ -39,9 +40,9 @@ function Login() {
                 </Form>
                 <div className="d-flex justify-content-center">
                   <p>No account? &nbsp;</p>
-                  <a href="#">
+                  <Link to='/signup'>
                     <strong>Sign Up!</strong>
-                  </a>
+                  </Link>
                 </div>
               </Card.Body>
             </Card>

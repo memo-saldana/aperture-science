@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import React from "react";
 import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
+import { Link } from "react-router-dom";
 
 function Signup() {
   return (
@@ -47,9 +48,9 @@ function Signup() {
                 </Form>
                 <div className="d-flex justify-content-center">
                   <p>Have an account? &nbsp;</p>
-                  <a href="#">
+                  <Link to="/login">
                     <strong>Log in!</strong>
-                  </a>
+                  </Link>
                 </div>
               </Card.Body>
             </Card>
