@@ -7,50 +7,38 @@ import React from "react";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
 
-function Signup() {
+function AccountRecovery_Password() {
   return (
     <Container>
       <Row
         id="App-Container"
         className="align-items-center justify-content-center"
       >
-        <Col lg="8">
+        <Col lg="6">
           <Card>
-            <Card.Body className="p-4">
+            <Card.Body>
               <Form className="mb-2">
-                <h1 className="display-4">Sign up</h1>
-                <Form.Group controlId="formBasicEmail">
-                  <Form.Control type="text" placeholder="Your Name" />
-                  <Form.Text className="text-muted"></Form.Text>
-                </Form.Group>
-                <Form.Group controlId="formBasicEmail">
-                  <Form.Control type="email" placeholder="Email" />
-                  <Form.Text className="text-muted"></Form.Text>
-                </Form.Group>
+                <h1 className="display-4">Reset password</h1>
                 <Form.Group controlId="formBasicPassword">
                   <Form.Control
                     className="mb-2"
                     type="password"
-                    placeholder="Password"
+                    placeholder="New password"
                   />
                 </Form.Group>
-                <Form.Group controlId="formBasicPassword">
+                <Form.Group controlId="formBasicPasswordConfirmation">
                   <Form.Control
                     className="mb-2"
                     type="password"
                     placeholder="Confirm password"
                   />
                 </Form.Group>
-                <Button variant="primary" size="lg" block>
-                  Sign up
-                </Button>
-              </Form>
-              <div className="d-flex justify-content-center">
-                <p>Have an account? &nbsp;</p>
                 <Link to="/login">
-                  <strong>Log in!</strong>
+                  <Button variant="primary" size="lg" block>
+                    Log in
+                  </Button>
                 </Link>
-              </div>
+              </Form>
             </Card.Body>
           </Card>
         </Col>
@@ -59,4 +47,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default AccountRecovery_Password;
