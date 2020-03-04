@@ -19,7 +19,7 @@ function AccountRecovery_Email() {
             <Card.Body>
               <Form className="mb-2">
                 <Form.Group controlId="formBasicEmail">
-                  <h1 className="display-4">Find account</h1>
+                  <h1 className="display-4">Reset Password</h1>
                   <Form.Control type="email" placeholder="Email" />
                   <Form.Text className="text-muted"></Form.Text>
                 </Form.Group>
