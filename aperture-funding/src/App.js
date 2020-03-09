@@ -1,20 +1,23 @@
-import './App.css';
-import Login from './Login';
-import Signup from './Signup';
 import AccountEmail from './AccountRecovery_Email';
 import AccountPassword from './AccountRecovery_Password'
+import Main from './Main';
+import Login from './Login';
 import React from "react";
+import Signup from './Signup';
+import Themer from './ThemeSetter';
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
 
 function App() {
   return (
     <Router>
+      <Themer />
       <Switch>
         <Route path="/login" component={Login}/>
         <Route path="/signup" component={Signup}/>
-        <Route path="/accountrec_email" component={AccountEmail} />
-        <Route path="/accountrec_password" component={AccountPassword} />
+        <Route path="/recovery-email" component={AccountEmail} />
+        <Route path="/recovery-password" component={AccountPassword} />
+        <Route path="/*" component={Main}/>
       </Switch>
     </Router>
   );

@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 
 function AccountRecovery_Password() {
   return (
-    <Container>
+    <Container fluid>
       <Row
         id="App-Container"
         className="align-items-center justify-content-center"
@@ -34,7 +34,7 @@ function AccountRecovery_Password() {
                   />
                 </Form.Group>
                 <Link to="/login">
-                  <Button variant="primary" size="lg" block>
+                  <Button variant="main" size="lg" block>
                     Log in
                   </Button>
                 </Link>
