@@ -1,6 +1,5 @@
 import AccountEmail from './AccountRecovery_Email';
 import AccountPassword from './AccountRecovery_Password'
-import Main from './Main';
 import Login from './Login';
 import React from "react";
 import Signup from './Signup';
@@ -17,7 +16,6 @@ function App() {
         <Route path="/signup" component={Signup}/>
         <Route path="/recovery-email" component={AccountEmail} />
         <Route path="/recovery-password" component={AccountPassword} />
-        <Route path="/*" component={Main}/>
       </Switch>
     </Router>
   );
