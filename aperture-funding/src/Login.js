@@ -7,6 +7,37 @@ import React, { useState } from "react";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
 
+
+/* WIP∫
+function checkInputs(state) {
+  if (state.name !== "" && state.email !== "" && state.password !== "" && state.confirmation !== "") {
+    return true
+  }
+  return false
+}
+
+function handleClick(event, state) {
+  const id = event.target.id;
+  console.log("Pressed " + id);
+
+  if (checkInputs(state)) {
+    (async () => {
+      const rawResponse = await fetch('http://localhost:3000/api/signup', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({email: state.email, confirmPassword: state.confirmation, password: state.password})
+      });
+      const content = await rawResponse.json();
+    
+      console.log(content);
+    })();
+  }
+}
+*/
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +79,7 @@ function Login() {
                   />
                   <Link to="/recovery-email"> Forgot your password?</Link>
                 </Form.Group>
-                <Button variant="main" size="lg" block>
+                <Button id="loginBtn" variant="main" size="lg" block onClick={e => handleClick(e, state)}>
                   Log in
                 </Button>
               </Form>
