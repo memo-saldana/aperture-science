@@ -21,6 +21,34 @@ function reducer(state, { field, value }) {
   };
 }
 
+function checkInputs(state) {
+  if (state.name !== "" && state.email !== "" && state.password !== "" && state.confirmation !== "") {
+    return true
+  }
+  return false
+}
+
+function handleClick(event, state) {
+  const id = event.target.id;
+  console.log("Pressed " + id);
+
+  if (checkInputs(state)) {
+    (async () => {
+      const rawResponse = await fetch('http://localhost:3000/api/signup', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({email: state.email, confirmPassword: state.confirmation, password: state.password})
+      });
+      const content = await rawResponse.json();
+    
+      console.log(content);
+    })();
+  }
+}
+
 function Signup() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -82,7 +110,7 @@ function Signup() {
                     name="confirmation"
                   />
                 </Form.Group>
-                <Button variant="main" size="lg" block>
+                <Button id="signUpBtn" variant="main" size="lg" block onClick={e => handleClick(e, state)}>
                   Sign up
                 </Button>
               </Form>
