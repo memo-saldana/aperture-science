@@ -16,10 +16,10 @@ function checkInput(email) {
 function handleClick(event, email) {
   const id = event.target.id;
   console.log("Pressed " + id);
-
+/* PENDIENTE CHECAR EMAIL Y TOKEN
   if (checkInput(email)) {
     (async () => {
-      const rawResponse = await fetch('http://localhost:3000/api/forgot', {
+      const rawResponse = await fetch('http://localhost:3000/api/password', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -32,6 +32,7 @@ function handleClick(event, email) {
       console.log(content);
     })();
   }
+  */
 }
 
 function AccountRecovery_Email() {
