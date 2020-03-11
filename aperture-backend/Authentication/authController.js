@@ -1,4 +1,5 @@
 const User = require('../models/user'),
+      mailer = require('../services/mailer'),
       MyError = require('../models/MyError'),
       ctr = {};
 
@@ -33,5 +34,35 @@ ctr.login = () => async (req,res,next) => {
     token: token
   })
 }
+
+ctr.sendRecoveryEmail = () => async (req, res, next) => {
+  const {email} = req.body;
+
+  res.status(200).json({message: "An email will be sent if the address corresponds to a valid account."});
+
+  const { user,token } = await User.generateResetToken(email);
+  if(user){
+    await mailer.sendResetPassword(email, token);
+  }
+}
+
+ctr.verifyToken = () => async (req, res, next) => {
+  const {email, token} = req.query;
+
+  await User.verifyToken(email, token);
+
+  return res.status(200).json({message: "Link is valid."});
+}
+
+ctr.resetPassword = () => async (req,res,next) => {
+  const {email, token, password} = req.body;
+  
+  const userId = await User.verifyToken(email, token);
+
+  await User.changePassword(userId, password)
+
+  res.status(200).json({message: "Se restableció la contraseña exitosamente"})
+}
+
 
 module.exports = ctr;
