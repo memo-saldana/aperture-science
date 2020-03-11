@@ -6,6 +6,34 @@ import Form from "react-bootstrap/Form";
 import React, { useState } from "react";
 import Row from "react-bootstrap/Row";
 
+function checkInput(email) {
+  if (email !== "") {
+    return true
+  }
+  return false
+}
+
+function handleClick(event, email) {
+  const id = event.target.id;
+  console.log("Pressed " + id);
+
+  if (checkInput(email)) {
+    (async () => {
+      const rawResponse = await fetch('http://localhost:3000/api/forgot', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({email: email})
+      });
+      const content = await rawResponse.json();
+    
+      console.log(content);
+    })();
+  }
+}
+
 function AccountRecovery_Email() {
   const [email, setEmail] = useState("");
 
@@ -32,7 +60,7 @@ function AccountRecovery_Email() {
                   />
                   <Form.Text className="text-muted"></Form.Text>
                 </Form.Group>
-                <Button variant="main" size="lg" block>
+                <Button id="continueBtn" variant="main" size="lg" block onClick={e => handleClick(e, email)}>
                   Continue
                 </Button>
               </Form>
