@@ -19,7 +19,7 @@ let userSchema = new mongoose.Schema({
   },
   tokens: [{
     type: String,
-    select:false
+    select: false
   }]
 })
 
@@ -43,6 +43,51 @@ userSchema.pre('save', function(next) {
   }
 })
 
+userSchema.statics.generateResetToken = async function(email){
+  
+  const user = await this.findOne({phone, bActive:true, bVerified: true}).exec();
+
+  if(user){
+    // console.log('user found, generating token');
+    
+    const buffer = crypto.randomBytes(4);
+
+    user.resetPasswordToken = buffer;
+    //Valid for 1 hour
+    user.resetPasswordExpires = Date.now() + 3600000;
+    await user.save();
+
+    return  Promise.resolve({user: user, token: token});
+  } else {
+    // console.log('user not found, no action taken');
+    
+    return Promise.resolve({ user: null, token: null});
+  }
+}
+
+userSchema.statics.verifyToken = async function(email, token) {
+  const user = await this.findOne({
+    email,
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: Date.now() },
+    bActive: true,
+    bVerified: true
+  }).exec();
+  
+  if(user){
+    return Promise.resolve(user._id);
+  } else {
+    return Promise.reject(new MyError(409, "Link has expired."));
+  }
+}
+
+userSchema.statics.changePassword = async function(userId, password) {
+  const user = await User.findById(userId).exec();
+
+  user.password = password;
+  return await user.save({ validateBeforeSave: false });
+}
+
 userSchema.methods.comparePassword = async function (password) {
 
   const matches = await bcrypt.compare(password, this.password);
@@ -51,10 +96,10 @@ userSchema.methods.comparePassword = async function (password) {
 };
 
 userSchema.methods.generateToken = async function() {
-  const user = this
-  const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: '7 days'})
-  user.tokens.push(token)
-  await user.save()
+  const user = this;
+  const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: '7 days'});
+  user.tokens.push(token);
+  await user.save();
   return token;
 }
 

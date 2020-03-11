@@ -7,4 +7,10 @@ router.post('/signup', aHandler(authCtr.signup()));
 
 router.post('/login', aHandler(authCtr.login()));
 
+router.post('/forgot', aHandler(authCtr.sendRecoveryEmail()));
+
+router.get('/verify', aHandler(authCtr.verifyToken()));
+
+router.post('/password', aHandler(authCtr.resetPassword()));
+
 module.exports = router;
