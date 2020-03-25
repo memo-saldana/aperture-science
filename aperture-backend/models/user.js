@@ -4,6 +4,13 @@ const mongoose = require('mongoose'),
       bcrypt = require('bcrypt');
 
 let userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, "Name is missing"],
+  },
+  about: {
+    type: String,
+  },
   email: {
     type: String,
     required: [true, "Email is missing"],
@@ -11,16 +18,16 @@ let userSchema = new mongoose.Schema({
       if(!validator.isEmail(value)) {
         throw new Error('Invalid email')
       }
-    }
+    },
   },
   password: {
     type: String,
-    required: [true, "Password is missing"]
+    required: [true, "Password is missing"],
   },
   tokens: [{
     type: String,
-    select: false
-  }]
+    select: false,
+  }],
 })
 
 // Validate if email is unique - unique option only creates an index
