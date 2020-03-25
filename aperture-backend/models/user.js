@@ -28,6 +28,8 @@ let userSchema = new mongoose.Schema({
     type: String,
     select: false,
   }],
+}, {
+  timestamps: true,
 })
 
 // Validate if email is unique - unique option only creates an index
