@@ -1,0 +1,33 @@
+{
+  "name": "aperture-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/memo-saldana/aperture-science.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/memo-saldana/aperture-science/issues"
+  },
+  "homepage": "https://github.com/memo-saldana/aperture-science#readme",
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "body-parse": "^0.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.3",
+    "morgan": "^1.9.1",
+    "nodemailer": "^6.4.5",
+    "nodemailer-express-handlebars": "^3.1.0",
+    "validator": "^12.2.0"
+  }
+}
