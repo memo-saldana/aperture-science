@@ -25,6 +25,7 @@ const TopNavbar = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="justify-content-end" style={{ width: "100%" }}>
+                        <Nav.Link href="/create-project">Create Project</Nav.Link>
                         <Nav.Link href="/project">Project (Template)</Nav.Link>
                         <Nav.Link href="/login">Log in</Nav.Link>
                         <Button variant="outline-info" href="/signup">Sign up</Button>

@@ -5,6 +5,7 @@ import React from "react";
 import Signup from './Signup';
 import Themer from './ThemeSetter';
 import ProjectView from './ProjectView';
+import CreateProject from './CreateProject';
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import TopNavbar from './TopNavbar';
 
@@ -25,7 +26,11 @@ function App() {
         <Route path="/recovery-email" component={AccountEmail} />
         <Route path="/recovery-password" component={AccountPassword} />
         <Route path="/project" component={ProjectView} />
+<<<<<<< HEAD:client/src/App.js
 >>>>>>> Started the template for the projects:aperture-funding/src/App.js
+=======
+        <Route path="/create-project" component={CreateProject} />
+>>>>>>> Create scaffolding for Create Project page:aperture-funding/src/App.js
       </Switch>
     </Router>
   );
