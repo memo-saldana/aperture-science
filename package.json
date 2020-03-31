@@ -6,6 +6,7 @@
   "scripts": {
     "postinstall": "cd server && npm install",
     "start": "node server/app.js",
+    "config": "cp .env.config .env",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
