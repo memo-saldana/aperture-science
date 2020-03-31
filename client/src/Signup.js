@@ -6,13 +6,15 @@ import Form from "react-bootstrap/Form";
 import React, { useReducer } from "react";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
-import { URI } from "./config";
+import URI from "./config";
+import axios from "axios";
 
 const initialState = {
   name: "",
   email: "",
   password: "",
-  confirmation: ""
+  confirmation: "",
+  error: ""
 };
 
 function reducer(state, { field, value }) {
@@ -23,41 +25,51 @@ function reducer(state, { field, value }) {
 }
 
 function checkInputs(state) {
-  if (state.name !== "" && state.email !== "" && state.password !== "" && state.confirmation !== "") {
-    return true
+  if (
+    state.name !== "" &&
+    state.email !== "" &&
+    state.password !== "" &&
+    state.confirmation !== ""
+  ) {
+    return true;
   }
-  return false
+  return false;
 }
 
-function handleClick(event, state) {
-  const id = event.target.id;
-  console.log("Pressed " + id);
-
-  if (checkInputs(state)) {
-    (async () => {
-      const rawResponse = await fetch(URI + '/api/signup', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({email: state.email, confirmPassword: state.confirmation, password: state.password})
-      });
-      const content = await rawResponse.json();
-    
-      console.log(content);
-    })();
-  }
-}
-
-function Signup() {
+function Signup(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const onChange = (e) => {
+  const onChange = e => {
     dispatch({ field: e.target.name, value: e.target.value });
-  }
+  };
 
-  console.log("state: ", state);
+  const _signupHandler = _ => {
+    console.log("state: ", state);
+    let { name, email, password, confirmation } = state;
+    if (checkInputs(state)) {
+      return axios
+        .post(URI + "/api/signup", { name, email, password, confirmation })
+        .then(response => {
+          return null;
+        })
+        .catch(error => {
+          if (error.response) {
+            return error.response.data.message;
+          } else return error.message;
+        });
+    }
+  };
+
+  const _signup = async e => {
+    e.preventDefault();
+    let respError = await _signupHandler();
+    if (respError) {
+      dispatch({ field: "error", value: respError });
+    } else {
+      props.history.push("/login");
+    }
+  };
+
   return (
     <Container fluid>
       <Row
@@ -69,6 +81,7 @@ function Signup() {
             <Card.Body className="p-4">
               <Form className="mb-2">
                 <h1 className="display-4">Sign up</h1>
+                <p className="error">{state.error}</p>
                 <Form.Group controlId="formBasicEmail">
                   <input
                     type="text"
@@ -111,7 +124,13 @@ function Signup() {
                     name="confirmation"
                   />
                 </Form.Group>
-                <Button id="signUpBtn" variant="main" size="lg" block onClick={e => handleClick(e, state)}>
+                <Button
+                  id="signUpBtn"
+                  variant="main"
+                  size="lg"
+                  block
+                  onClick={_signup}
+                >
                   Sign up
                 </Button>
               </Form>
