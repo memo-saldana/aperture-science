@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import React, { useState } from "react";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
+import { URI } from "./config";
 
 function checkInputs(password, confirmation) {
   if (password !== "" && confirmation !== "" && password === confirmation) {
@@ -20,7 +21,7 @@ function handleClick(event, password, confirmation) {
 
   if (checkInputs(password, confirmation)) {
     (async () => {
-      const rawResponse = await fetch('http://localhost:3000/api/forgot', {
+      const rawResponse = await fetch(URI + '/api/forgot', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',

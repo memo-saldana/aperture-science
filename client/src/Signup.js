@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import React, { useReducer } from "react";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
+import { URI } from "./config";
 
 const initialState = {
   name: "",
@@ -34,7 +35,7 @@ function handleClick(event, state) {
 
   if (checkInputs(state)) {
     (async () => {
-      const rawResponse = await fetch('http://localhost:3000/api/signup', {
+      const rawResponse = await fetch(URI + '/api/signup', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',

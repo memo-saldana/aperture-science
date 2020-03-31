@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import React, { useState } from "react";
 import Row from "react-bootstrap/Row";
+import { URI } from "./config";
 
 function checkInput(email) {
   if (email !== "") {
@@ -19,7 +20,7 @@ function handleClick(event, email) {
 /* PENDIENTE CHECAR EMAIL Y TOKEN
   if (checkInput(email)) {
     (async () => {
-      const rawResponse = await fetch('http://localhost:3000/api/password', {
+      const rawResponse = await fetch(URI + '/api/password', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
