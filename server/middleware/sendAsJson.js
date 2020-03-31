@@ -1,4 +1,5 @@
 let sendAsJson = () => async (err, req, res, next) => {
+  console.log('err :', err);
   if(process.env.NODE_ENV !== 'dev'){
     if(err.statusCode !== 500){
         // console.log('err :', err);
