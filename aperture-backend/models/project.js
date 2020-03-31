@@ -13,7 +13,7 @@ const projectSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
-    required: [true, "Category missing."],
+    // required: [true, "Category missing."],
   },
   picture: {
     type: String,
