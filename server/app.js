@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/*', (req,res) => {
-  res.redirect('/')
+  res.sendFile(path.resolve('./client/build/index.html'));
 })
 
 app.listen(PORT, _ => {

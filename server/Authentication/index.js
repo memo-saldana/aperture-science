@@ -3,6 +3,8 @@ const express = require("express"),
       aHandler = require('express-async-handler'),
       authCtr = require('./authController');
 
+router.get('/', (req, res) => res.json({message: "API working!"}));
+
 router.post('/signup', aHandler(authCtr.signup()));
 
 router.post('/login', aHandler(authCtr.login()));
