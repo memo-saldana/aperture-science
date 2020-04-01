@@ -4,9 +4,9 @@ const User = require('../models/user'),
       ctr = {};
 
 ctr.signup = () => async (req,res,next) => {
-  const { email, confirmPassword, password } = req.body;
+  const {name, email, confirmPassword, password } = req.body;
   if(password != confirmPassword) return Promise.reject(new MyError(400, "Passwords do not match."));
-  let user = new User({ email, password})
+  let user = new User({name, email, password})
   await user.save();
   res.status(201).json({
     message: "Se creo el usuario exitosamente.",
