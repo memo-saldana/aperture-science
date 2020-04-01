@@ -71,7 +71,7 @@ userSchema.statics.generateResetToken = async function(email){
     
     const buffer = crypto.randomBytes(4);
     const token = buffer.toString('hex');
-    user.resetPasswordToken = buffer;
+    user.resetPasswordToken = token;
     //Valid for 1 hour
     user.resetPasswordExpires = Date.now() + 3600000;
     await user.save();
