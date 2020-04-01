@@ -8,16 +8,6 @@ import Row from "react-bootstrap/Row";
 import { URI } from "./config";
 import axios from "axios";
 
-/*
-mandar get /api/verify
-mandar email y token
-
-
-post /api/password
-mandar email, token, password
-
-*/
-
 function checkInputs(password, confirmation) {
   if (password !== "" && confirmation !== "" && password === confirmation) {
     return true;
@@ -30,6 +20,7 @@ const AccountRecovery_Password = ({ history, match, location }) => {
   const [confirmation, setConfirmation] = useState("");
   const [certificate, setCertificate] = useState(false);
   const [error, setError] = useState("");
+  const [passMatch, setPassMatch] = useState("");
 
   const queryString = require("query-string");
   let parsed = queryString.parse(location.search);
@@ -46,13 +37,17 @@ const AccountRecovery_Password = ({ history, match, location }) => {
         })
         .catch(error => {
           if (error.response) {
-            return error.response.data.message;
-          } else return error.message;
+            setCertificate(false);
+            return setError(error.response.data.message);
+          } else return setError(error.message);
         });
+    } else {
+      setPassMatch("Passwords are either empty or not match");
     }
   };
 
   useEffect(() => {
+    setPassMatch("");
     const fetchData = async () => {
       axios
         .get(`${URI}/api/verify?token=${token}&email=${email}`)
@@ -121,6 +116,7 @@ const AccountRecovery_Password = ({ history, match, location }) => {
         <Col lg="6">
           <Card>
             <Card.Body>{!certificate ? errorMessage : recoveryForm}</Card.Body>
+            <p className="error">{passMatch}</p>
           </Card>
         </Col>
       </Row>
