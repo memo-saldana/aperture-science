@@ -34,6 +34,7 @@ serv.sendResetPassword = async (email, token) => {
     subject: 'Reset your password for Aperture Science',
     text: process.env.BASE_URL + '/recovery-password?token=' + token + "&email=" + email,
   })
+  console.log('mail :', mail);
 }
 
 module.exports = serv;
