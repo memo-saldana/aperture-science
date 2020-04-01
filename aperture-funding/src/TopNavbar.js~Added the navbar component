@@ -28,7 +28,7 @@ const TopNavbar = () => {
                         <Nav.Link href="/create-project">Create Project</Nav.Link>
                         <Nav.Link href="/project">Project (Template)</Nav.Link>
                         <Nav.Link href="/login">Log in</Nav.Link>
-                        <Button variant="outline-info" href="/signup">Sign up</Button>
+                        <Button variant="outline-info" href="/signup" className="ml-3">Sign up</Button>
                     </Nav>
                 </Navbar.Collapse>
         </Navbar>
