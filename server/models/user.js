@@ -1,6 +1,8 @@
 const mongoose = require('mongoose'),
       jwt = require('jsonwebtoken'),
       validator = require('validator'),
+      crypto = require('crypto'),
+      MyError = require('../models/MyError'),
       bcrypt = require('bcrypt');
 
 let userSchema = new mongoose.Schema({
@@ -60,7 +62,7 @@ userSchema.statics.generateResetToken = async function(email){
     // console.log('user found, generating token');
     
     const buffer = crypto.randomBytes(4);
-
+    const token = buffer.toString('hex');
     user.resetPasswordToken = buffer;
     //Valid for 1 hour
     user.resetPasswordExpires = Date.now() + 3600000;

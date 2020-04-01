@@ -23,7 +23,6 @@ let mailer = nodemailer.createTransport({
 
 
 serv.sendResetPassword = async (email, token) => {
-  console.log('email :', email);
   // mailer.use('compile', hbs(options))
   mailer.use('compile', function(mail, callback){
     callback();
