@@ -81,8 +81,6 @@ userSchema.statics.verifyToken = async function(email, token) {
     email,
     resetPasswordToken: token,
     resetPasswordExpires: { $gt: Date.now() },
-    bActive: true,
-    bVerified: true
   }).exec();
   
   if(user){
