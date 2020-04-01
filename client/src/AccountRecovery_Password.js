@@ -42,7 +42,7 @@ const AccountRecovery_Password = ({ history, match, location }) => {
       return axios
         .post(URI + "/api/password", { email, token, password })
         .then(response => {
-          history.push("/login")
+          history.push("/login");
         })
         .catch(error => {
           if (error.response) {
