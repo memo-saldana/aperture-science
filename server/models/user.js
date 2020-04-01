@@ -99,10 +99,10 @@ userSchema.statics.verifyToken = async function(email, token) {
 }
 
 userSchema.statics.changePassword = async function(userId, password) {
-  const user = await User.findById(userId).exec();
+  const user = await this.findById(userId).exec();
 
   user.password = password;
-  return await user.save({ validateBeforeSave: false });
+  return await user.save();
 }
 
 userSchema.methods.comparePassword = async function (password) {
