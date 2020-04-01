@@ -54,7 +54,7 @@ userSchema.pre('save', function(next) {
 
 userSchema.statics.generateResetToken = async function(email){
   
-  const user = await this.findOne({email, bActive:true, bVerified: true}).exec();
+  const user = await this.findOne({email}).exec();
   console.log('user :', user);
   if(user){
     // console.log('user found, generating token');
