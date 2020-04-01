@@ -16,7 +16,7 @@ function checkInputs(email, password) {
   return false;
 }
 
-const Login = (props) => {
+const Login = props => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -35,7 +35,7 @@ const Login = (props) => {
   const _loginHandler = _ => {
     if (checkInputs(email, password)) {
       return axios
-        .post(URI + '/api/login', {
+        .post(URI + "/api/login", {
           email,
           password
         })
@@ -119,6 +119,6 @@ const Login = (props) => {
       </Row>
     </Container>
   );
-}
+};
 
 export default Login;

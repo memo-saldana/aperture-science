@@ -12,10 +12,10 @@ function App() {
     <Router>
       <Themer />
       <Switch>
-        <Route path="/login" component={Login}/>
-        <Route path="/signup" component={Signup}/>
-        <Route path="/recovery-email" component={AccountEmail} />
-        <Route path="/recovery-password" component={AccountPassword} />
+        <Route exact path="/login" component={Login}/>
+        <Route exact path="/signup" component={Signup}/>
+        <Route exact path="/recovery-email" component={AccountEmail} />
+        <Route exact path="/recovery-password" component={AccountPassword} />
       </Switch>
     </Router>
   );

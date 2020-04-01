@@ -43,10 +43,10 @@ const Signup = props => {
     dispatch({ field: e.target.name, value: e.target.value });
   };
 
-  let {name, email, password, confirmPassword} = state;
-
+  
   const _signupHandler = _ => {
     if (checkInputs(state)) {
+      let { name, email, password, confirmPassword } = state;
       return axios
         .post(URI + "/api/signup", { name, email, password, confirmPassword })
         .then(response => {
@@ -70,6 +70,12 @@ const Signup = props => {
     }
   };
 
+  const _handleKeyDown = e => {
+    if (e.key === "Enter") {
+      _signup(e);
+    }
+  };
+
   return (
     <Container fluid>
       <Row
@@ -89,6 +95,7 @@ const Signup = props => {
                     placeholder="Name"
                     aria-label="Name"
                     onChange={onChange}
+                    onKeyDown={_handleKeyDown}
                     name="name"
                   />
                   <Form.Text className="text-muted"></Form.Text>
@@ -100,6 +107,7 @@ const Signup = props => {
                     placeholder="Email"
                     aria-label="Email"
                     onChange={onChange}
+                    onKeyDown={_handleKeyDown}
                     name="email"
                   />
                   <Form.Text className="text-muted"></Form.Text>
@@ -111,6 +119,7 @@ const Signup = props => {
                     placeholder="Password"
                     aria-label="Password"
                     onChange={onChange}
+                    onKeyDown={_handleKeyDown}
                     name="password"
                   />
                 </Form.Group>
@@ -121,6 +130,7 @@ const Signup = props => {
                     placeholder="Confirm Password"
                     aria-label="Password confirmPassword"
                     onChange={onChange}
+                    onKeyDown={_handleKeyDown}
                     name="confirmPassword"
                   />
                 </Form.Group>
