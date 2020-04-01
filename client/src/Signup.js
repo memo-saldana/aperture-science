@@ -6,14 +6,14 @@ import Form from "react-bootstrap/Form";
 import React, { useReducer } from "react";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
-import URI from "./config";
+import { URI } from "./config";
 import axios from "axios";
 
 const initialState = {
   name: "",
   email: "",
   password: "",
-  confirmation: "",
+  confirmPassword: "",
   error: ""
 };
 
@@ -29,26 +29,26 @@ function checkInputs(state) {
     state.name !== "" &&
     state.email !== "" &&
     state.password !== "" &&
-    state.confirmation !== ""
+    state.confirmPassword !== ""
   ) {
     return true;
   }
   return false;
 }
 
-function Signup(props) {
+const Signup = props => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const onChange = e => {
     dispatch({ field: e.target.name, value: e.target.value });
   };
 
+  let {name, email, password, confirmPassword} = state;
+
   const _signupHandler = _ => {
-    console.log("state: ", state);
-    let { name, email, password, confirmation } = state;
     if (checkInputs(state)) {
       return axios
-        .post(URI + "/api/signup", { name, email, password, confirmation })
+        .post(URI + "/api/signup", { name, email, password, confirmPassword })
         .then(response => {
           return null;
         })
@@ -119,9 +119,9 @@ function Signup(props) {
                     type="password"
                     className="form-control"
                     placeholder="Confirm Password"
-                    aria-label="Password Confirmation"
+                    aria-label="Password confirmPassword"
                     onChange={onChange}
-                    name="confirmation"
+                    name="confirmPassword"
                   />
                 </Form.Group>
                 <Button
@@ -146,6 +146,6 @@ function Signup(props) {
       </Row>
     </Container>
   );
-}
+};
 
 export default Signup;

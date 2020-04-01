@@ -6,7 +6,7 @@ import Form from "react-bootstrap/Form";
 import React, { useState } from "react";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
-import URI from "./config";
+import { URI } from "./config";
 import axios from "axios";
 
 function checkInputs(email, password) {
@@ -16,7 +16,7 @@ function checkInputs(email, password) {
   return false;
 }
 
-function Login(props) {
+const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
