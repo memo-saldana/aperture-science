@@ -26,6 +26,7 @@ const TopNavbar = () => {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="justify-content-end" style={{ width: "100%" }}>
                         <Nav.Link href="/create-project">Create Project</Nav.Link>
+                        <Nav.Link href="/my-projects">My Projects</Nav.Link>
                         <Nav.Link href="/project">Project (Template)</Nav.Link>
                         <Nav.Link href="/login">Log in</Nav.Link>
                         <Button variant="outline-info" href="/signup" className="ml-3">Sign up</Button>
