@@ -24,6 +24,10 @@
     padding: 5px;
 }
 
+.account-image {
+    text-align: center;
+}
+
 
 .account-border {
     border: solid black 2px;
