@@ -53,6 +53,33 @@ function ThemeSetter() {
         .nav-main {
             background-color: var(--dark-bg) !important;
         }
+
+        .title-preview {
+          background-size: cover;
+          position: relative;
+          min-height: 200px;
+          max-height: 200px;
+          background-position: center center;
+          background-repeat: no-repeat;
+          color: white;
+        }
+
+        .title-preview::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, .5);
+          z-index: 2;
+        }
+
+        .preview-data {
+          position: absolute;
+          color: white;
+          z-index: 3;
+        }
       `}
     </style>
   );
