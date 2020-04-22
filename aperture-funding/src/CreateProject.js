@@ -3,6 +3,7 @@ import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
+import Jumbotron from "react-bootstrap/Jumbotron";
 import React, { useReducer, useEffect, useState } from "react";
 import Row from "react-bootstrap/Row";
 import bsCustomFileInput from "bs-custom-file-input";
@@ -17,44 +18,40 @@ const initialState = {
   dateError: "",
   goal: 0.0,
   description: "",
+  fileURL: "",
 };
 
 function reducer(state, { field, value }) {
   return {
     ...state,
-    [field]: value
+    [field]: value,
   };
 }
 
 function checkInputs(state, startDate, endDate, picture) {
-  if (startDate == null && endDate && null) {
-    return false;
-  }
-  if (
-    state.title === "" &&
-    state.subtitle === "" &&
-    state.selectedCategory === "" &&
-    state.description === "" &&
-    picture === null &&
-    startDate === null &&
-    endDate === null &&
+  return !(
+    state.title === "" ||
+    state.subtitle === "" ||
+    state.selectedCategory === "" ||
+    state.description === "" ||
+    picture === null ||
+    startDate === null ||
+    endDate === null ||
     state.goal <= 0.0
-  ) {
-    return false;
-  } else return true;
+  );
 }
 
 const dateParser = (dateStr) => {
-  let data = dateStr.split('-');
+  let data = dateStr.split("-");
   let date = {
     year: parseInt(data[0]),
     month: parseInt(data[1]),
-    day: parseInt(data[2])
+    day: parseInt(data[2]),
   };
 
   let dateObj = new Date(date.year, date.month - 1, date.day);
   return dateObj;
-}
+};
 
 const CreateProject = ({ history }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -70,65 +67,72 @@ const CreateProject = ({ history }) => {
   useEffect(() => {
     const today = new Date();
     today.setDate(today.getDate() - 1);
-    let msg = "";
+    let errorMsg = "";
 
     if (startDate < today && startDate !== null) {
-      msg = "Date must be from today onwards";
-    } if (startDate >= endDate && endDate !== null) {
-      msg = "Start date should be after end date";
+      errorMsg = "Start date must be from today onwards";
+    } else if (startDate >= endDate && endDate !== null) {
+      errorMsg = "End date should be after start date";
     }
 
-    return dispatch({ field: "dateError", value: msg });
-
+    return dispatch({ field: "dateError", value: errorMsg });
   }, [startDate, endDate]);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const name = e.target.name;
-    if (name === "picture" && typeof(e.target.files[0]) !== "undefined") {
+    if (name === "picture" && typeof e.target.files[0] !== "undefined") {
       setPicture(e.target.files[0]);
-    } if (e.target.name === "startDate" || e.target.name === "endDate"){
+      dispatch({
+        field: "fileURL",
+        value: URL.createObjectURL(e.target.files[0]),
+      });
+    } else if (e.target.name === "startDate" || e.target.name === "endDate") {
       let date = dateParser(e.target.value);
       name === "startDate" ? setStartDate(date) : setEndDate(date);
-    }
-    else {
-      dispatch({ field:name, value: e.target.value });
+    } else {
+      dispatch({ field: name, value: e.target.value });
     }
   };
 
-  const _postHandler = _ => {
-    if (checkInputs(state)) {
+  const _postHandler = (_) => {
+    if (
+      checkInputs(state, startDate, endDate, picture) &&
+      state.dateError === ""
+    ) {
       let fd = new FormData();
-      
-      fd.append('title', state.title);
-      fd.append('subtitle', state.subtitle);
-      fd.append('category', startDate.selectedCategory);
-      fd.append('campaignStart', startDate);
-      fd.append('campaignEnd', endDate);
-      fd.append('goal', state.goal);
-      fd.append('description', state.description);
-      fd.append('picture', picture, picture.name);
-      
+
+      fd.append("title", state.title);
+      fd.append("subtitle", state.subtitle);
+      fd.append("category", state.selectedCategory);
+      fd.append("campaignStart", startDate);
+      fd.append("campaignEnd", endDate);
+      fd.append("goal", state.goal);
+      fd.append("description", state.description);
+      fd.append("picture", picture, picture.name);
+
       return axios
-        .post(URI + "/api/", fd)
-        .then(response => {
+        .post(URI + "/api/projects", fd)
+        .then((response) => {
           console.log(response);
           return null;
         })
-        .catch(error => {
+        .catch((error) => {
           if (error.response) {
             return error.response.data.message;
           } else return error.message;
         });
     }
+    console.log("faltaron datos o hay error");
   };
 
-  const _postProject = async e => {
+  const _postProject = async (e) => {
     e.preventDefault();
     let respError = await _postHandler();
     if (respError) {
       console.log(respError);
     } else {
-      history.push("/");
+      console.log("sent data?");
+      //history.push("/");
     }
   };
 
@@ -174,12 +178,12 @@ const CreateProject = ({ history }) => {
                         name="selectedCategory"
                         onChange={onChange}
                       >
-                        {state.categories.map(category => {
+                        {state.categories.map((category) => {
                           return <option key={category}>{category}</option>;
                         })}
                       </Form.Control>
                     </Form.Group>
-                    
+
                     <p className="error">{state.dateError}</p>
                     <Form.Row>
                       <Form.Group as={Col} controlId="formProjectDateStart">
@@ -215,8 +219,7 @@ const CreateProject = ({ history }) => {
                         step="0.01"
                         name="goal"
                         onChange={onChange}
-                        value={state.goal}
-                        min = {0.0}
+                        min={0.0}
                       />
                     </Form.Group>
                   </Card.Body>
@@ -238,26 +241,53 @@ const CreateProject = ({ history }) => {
                     </Form.Group>
                   </Card.Body>
                 </Card>
-                <div className="custom-file mt-3">
-                  <input
-                    id="inputGroupFile01"
-                    type="file"
-                    className="custom-file-input"
-                    name="picture"
-                    onChange={onChange}
-                    accept="image/*"
-                  />
-                  <label
-                    className="custom-file-label"
-                    htmlFor="inputGroupFile01"
-                  >
-                    Select picture
-                  </label>
-                  <p className="error">{state.picError}</p>
-                </div>
+
+                <Card className="mt-4">
+                  <Card.Body>
+                    <Jumbotron
+                      style={{
+                        position: `relative`,
+                        backgroundImage: `url(${
+                          state.fileURL === "" ? "" : state.fileURL
+                        })`,
+                      }}
+                      className="title-preview"
+                    >
+                      <div className="preview-data">
+                        <h1>
+                          {state.title === "" ? "Your Title" : state.title}
+                        </h1>
+                        <p>
+                          {state.subtitle === ""
+                            ? "A short description of your project"
+                            : state.subtitle}
+                        </p>
+                      </div>
+                    </Jumbotron>
+                    <div className="custom-file mt-3">
+                      <input
+                        id="inputGroupFile01"
+                        type="file"
+                        className="custom-file-input"
+                        name="picture"
+                        onChange={onChange}
+                        accept="image/*"
+                      />
+                      <label
+                        className="custom-file-label"
+                        htmlFor="inputGroupFile01"
+                      >
+                        Select picture
+                      </label>
+                    </div>
+                  </Card.Body>
+                </Card>
               </Form.Group>
             </Form.Row>
-            <Button variant="main" onClick={_postProject}> Create Project </Button>
+            <Button variant="main" onClick={_postProject}>
+              {" "}
+              Create Project{" "}
+            </Button>
           </Form>
         </Container>
       </Row>
