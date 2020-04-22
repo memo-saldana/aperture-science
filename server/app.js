@@ -11,9 +11,11 @@ const express = require('express'),
       aHandler = require('express-async-handler'),
       eHandler = require('./middleware/errorHandling'),
       sendAsJSON = require('./middleware/sendAsJson'),
+      adminConfig = require('./config/adminSetup'),
       // Routers
       projectRoutes = require('./Projects'),
       authRoutes = require('./Authentication');
+      categoryRoutes = require('./Categories');
 
 // DB Setup
 require('./config/dbSetup');
@@ -29,6 +31,7 @@ app.use(express.static(path.resolve('./client/build')));
 // Routes
 app.use('/api', authRoutes);
 app.use('/api/projects', projectRoutes); 
+app.use('/api/categories', categoryRoutes); 
 // Error handling
 app.use(eHandler());
 app.use(sendAsJSON());
@@ -43,5 +46,8 @@ app.get('/*', (req,res) => {
 })
 
 app.listen(PORT, _ => {
-  console.log('Server up and running on port ' + PORT)
-})
+  adminConfig()
+  .then(_ => {
+    console.log('Server up and running on port ' + PORT)
+  });
+});

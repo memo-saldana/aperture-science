@@ -37,6 +37,11 @@ let userSchema = new mongoose.Schema({
   resetPasswordExpires: {
     type: Date,
     select: false
+  },
+  role: {
+    type: String,
+    default: "user",
+    select: false,
   }
 }, {
   timestamps: true,
