@@ -7,42 +7,57 @@ import React, { useState } from "react";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
 import { URI } from "./config";
+import axios from "axios";
 
 function checkInputs(email, password) {
   if (email !== "" && password !== "") {
-    return true
+    return true;
   }
-  return false
+  return false;
 }
 
-function handleClick(event, email, password) {
-  const id = event.target.id;
-  console.log("Pressed " + id);
-
-  if (checkInputs(email, password)) {
-    (async () => {
-      const rawResponse = await fetch(URI + '/api/login', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({email: email, password: password})
-      });
-      const content = await rawResponse.json();
-    
-      console.log(content);
-    })();
-  }
-}
-
-
-function Login() {
+const Login = props => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  console.log("email: ", email);
-  console.log("password: ", password);
+  const _login = async e => {
+    e.preventDefault();
+    setError("");
+    let respError = await _loginHandler();
+    if (respError) {
+      setError(respError);
+    } else {
+      props.history.push("/");
+    }
+  };
+
+  const _loginHandler = _ => {
+    if (checkInputs(email, password)) {
+      return axios
+        .post(URI + "/api/login", {
+          email,
+          password
+        })
+        .then(response => {
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("userId", response.data.user._id);
+          return null;
+        })
+        .catch(error => {
+          if (error.response) {
+            return error.response.data.message;
+          } else return error.message;
+        });
+    }
+  };
+
+  const _handleKeyDown = e => {
+    if (e.key === "Enter") {
+      _login(e);
+    }
+  };
+
   return (
     <Container fluid>
       <Row
@@ -54,6 +69,7 @@ function Login() {
             <Card.Body>
               <Form className="mb-2">
                 <h1 className="display-4">Log in</h1>
+                <p className="error">{error}</p>
                 <Form.Group controlId="formBasicEmail">
                   <input
                     type="text"
@@ -63,6 +79,7 @@ function Login() {
                     onChange={e => {
                       setEmail(e.target.value);
                     }}
+                    onKeyDown={_handleKeyDown}
                   />
                   <Form.Text className="text-muted"></Form.Text>
                 </Form.Group>
@@ -75,10 +92,18 @@ function Login() {
                     onChange={e => {
                       setPassword(e.target.value);
                     }}
+                    onKeyDown={_handleKeyDown}
                   />
-                  <Link to="/recovery-email"> Forgot your password?</Link>
                 </Form.Group>
-                <Button id="loginBtn" variant="main" size="lg" block onClick={e => handleClick(e, email, password)}>
+                <Link to="/recovery-email"> Forgot your password?</Link>
+                <Button
+                  id="loginBtn"
+                  variant="main"
+                  size="lg"
+                  block
+                  onClick={_login}
+                  className="mt-3"
+                >
                   Log in
                 </Button>
               </Form>
@@ -94,6 +119,6 @@ function Login() {
       </Row>
     </Container>
   );
-}
+};
 
 export default Login;
