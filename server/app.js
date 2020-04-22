@@ -12,6 +12,7 @@ const express = require('express'),
       eHandler = require('./middleware/errorHandling'),
       sendAsJSON = require('./middleware/sendAsJson'),
       // Routers
+      projectRoutes = require('./Projects'),
       authRoutes = require('./Authentication');
 
 // DB Setup
@@ -27,7 +28,7 @@ app.use(express.static(path.resolve('./client/build')));
 
 // Routes
 app.use('/api', authRoutes);
-; 
+app.use('/api/projects', projectRoutes); 
 // Error handling
 app.use(eHandler());
 app.use(sendAsJSON());
@@ -38,7 +39,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/*', (req,res) => {
-  res.redirect('/')
+  res.sendFile(path.resolve('./client/build/index.html'));
 })
 
 app.listen(PORT, _ => {

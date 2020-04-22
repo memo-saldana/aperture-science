@@ -6,12 +6,15 @@ import Form from "react-bootstrap/Form";
 import React, { useReducer } from "react";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
+import { URI } from "./config";
+import axios from "axios";
 
 const initialState = {
   name: "",
   email: "",
   password: "",
-  confirmation: ""
+  confirmPassword: "",
+  error: ""
 };
 
 function reducer(state, { field, value }) {
@@ -22,41 +25,57 @@ function reducer(state, { field, value }) {
 }
 
 function checkInputs(state) {
-  if (state.name !== "" && state.email !== "" && state.password !== "" && state.confirmation !== "") {
-    return true
+  if (
+    state.name !== "" &&
+    state.email !== "" &&
+    state.password !== "" &&
+    state.confirmPassword !== ""
+  ) {
+    return true;
   }
-  return false
+  return false;
 }
 
-function handleClick(event, state) {
-  const id = event.target.id;
-  console.log("Pressed " + id);
-
-  if (checkInputs(state)) {
-    (async () => {
-      const rawResponse = await fetch('http://localhost:3000/api/signup', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({email: state.email, confirmPassword: state.confirmation, password: state.password})
-      });
-      const content = await rawResponse.json();
-    
-      console.log(content);
-    })();
-  }
-}
-
-function Signup() {
+const Signup = props => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const onChange = (e) => {
+  const onChange = e => {
     dispatch({ field: e.target.name, value: e.target.value });
-  }
+  };
 
-  console.log("state: ", state);
+  
+  const _signupHandler = _ => {
+    if (checkInputs(state)) {
+      let { name, email, password, confirmPassword } = state;
+      return axios
+        .post(URI + "/api/signup", { name, email, password, confirmPassword })
+        .then(response => {
+          return null;
+        })
+        .catch(error => {
+          if (error.response) {
+            return error.response.data.message;
+          } else return error.message;
+        });
+    }
+  };
+
+  const _signup = async e => {
+    e.preventDefault();
+    let respError = await _signupHandler();
+    if (respError) {
+      dispatch({ field: "error", value: respError });
+    } else {
+      props.history.push("/login");
+    }
+  };
+
+  const _handleKeyDown = e => {
+    if (e.key === "Enter") {
+      _signup(e);
+    }
+  };
+
   return (
     <Container fluid>
       <Row
@@ -68,6 +87,7 @@ function Signup() {
             <Card.Body className="p-4">
               <Form className="mb-2">
                 <h1 className="display-4">Sign up</h1>
+                <p className="error">{state.error}</p>
                 <Form.Group controlId="formBasicEmail">
                   <input
                     type="text"
@@ -75,6 +95,7 @@ function Signup() {
                     placeholder="Name"
                     aria-label="Name"
                     onChange={onChange}
+                    onKeyDown={_handleKeyDown}
                     name="name"
                   />
                   <Form.Text className="text-muted"></Form.Text>
@@ -86,6 +107,7 @@ function Signup() {
                     placeholder="Email"
                     aria-label="Email"
                     onChange={onChange}
+                    onKeyDown={_handleKeyDown}
                     name="email"
                   />
                   <Form.Text className="text-muted"></Form.Text>
@@ -97,6 +119,7 @@ function Signup() {
                     placeholder="Password"
                     aria-label="Password"
                     onChange={onChange}
+                    onKeyDown={_handleKeyDown}
                     name="password"
                   />
                 </Form.Group>
@@ -105,12 +128,19 @@ function Signup() {
                     type="password"
                     className="form-control"
                     placeholder="Confirm Password"
-                    aria-label="Password Confirmation"
+                    aria-label="Password confirmPassword"
                     onChange={onChange}
-                    name="confirmation"
+                    onKeyDown={_handleKeyDown}
+                    name="confirmPassword"
                   />
                 </Form.Group>
-                <Button id="signUpBtn" variant="main" size="lg" block onClick={e => handleClick(e, state)}>
+                <Button
+                  id="signUpBtn"
+                  variant="main"
+                  size="lg"
+                  block
+                  onClick={_signup}
+                >
                   Sign up
                 </Button>
               </Form>
@@ -126,6 +156,6 @@ function Signup() {
       </Row>
     </Container>
   );
-}
+};
 
 export default Signup;

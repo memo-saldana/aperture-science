@@ -23,7 +23,6 @@ let mailer = nodemailer.createTransport({
 
 
 serv.sendResetPassword = async (email, token) => {
-  console.log('email :', email);
   // mailer.use('compile', hbs(options))
   mailer.use('compile', function(mail, callback){
     callback();
@@ -34,6 +33,7 @@ serv.sendResetPassword = async (email, token) => {
     subject: 'Reset your password for Aperture Science',
     text: process.env.BASE_URL + '/recovery-password?token=' + token + "&email=" + email,
   })
+  console.log('mail :', mail);
 }
 
 module.exports = serv;

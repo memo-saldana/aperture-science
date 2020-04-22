@@ -1,0 +1,22 @@
+{
+  "name": "aperture-science",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "server/app.js",
+  "scripts": {
+    "postinstall": "cd server && npm install",
+    "start": "node server/app.js",
+    "config": "cp .env.config .env",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/memo-saldana/aperture-science.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/memo-saldana/aperture-science/issues"
+  },
+  "homepage": "https://github.com/memo-saldana/aperture-science#readme"
+}

@@ -5,40 +5,35 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import React, { useState } from "react";
 import Row from "react-bootstrap/Row";
+import { URI } from "./config";
+import axios from "axios";
 
-function checkInput(email) {
-  if (email !== "") {
-    return true
-  }
-  return false
-}
-
-function handleClick(event, email) {
-  const id = event.target.id;
-  console.log("Pressed " + id);
-/* PENDIENTE CHECAR EMAIL Y TOKEN
-  if (checkInput(email)) {
-    (async () => {
-      const rawResponse = await fetch('http://localhost:3000/api/password', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({email: email})
-      });
-      const content = await rawResponse.json();
-    
-      console.log(content);
-    })();
-  }
-  */
-}
-
-function AccountRecovery_Email() {
+function AccountRecovery_Email(props) {
   const [email, setEmail] = useState("");
 
-  console.log(email);
+  const _forgotHandler = async e => {
+    e.preventDefault();
+    if (email !== "") {
+      return axios
+        .post(URI + "/api/forgot", { email })
+        .then(response => {
+          return null;
+        })
+        .catch(error => {
+          if (error.response) {
+            return error.response.data.message;
+          } else return error.message;
+        });
+    }
+  };
+
+  const _handleKeyDown = e => {
+    if (e.key === "Enter") {
+      _forgotHandler(e);
+      console.log("sending it");
+    }
+  };
+
   return (
     <Container fluid>
       <Row
@@ -57,11 +52,20 @@ function AccountRecovery_Email() {
                     placeholder="Email"
                     aria-label="Email"
                     aria-describedby="basic-addon1"
-                    onChange={(e) => {setEmail(e.target.value)}}
+                    onChange={e => {
+                      setEmail(e.target.value);
+                    }}
+                    onKeyDown={_handleKeyDown}
                   />
                   <Form.Text className="text-muted"></Form.Text>
                 </Form.Group>
-                <Button id="continueBtn" variant="main" size="lg" block onClick={e => handleClick(e, email)}>
+                <Button
+                  id="continueBtn"
+                  variant="main"
+                  size="lg"
+                  block
+                  onClick={_forgotHandler}
+                >
                   Continue
                 </Button>
               </Form>

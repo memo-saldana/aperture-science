@@ -8,8 +8,10 @@ function ThemeSetter() {
             --background-color: #fcfaf9; /*snow*/
             --progress-color: #5bc0be;   /*sea serpent*/
             --main-color: #4b5f78;       /*payne's gray*/
+            --hover-main: #45576e;
             --bold-main: #454c63;        /*independence*/
             --dark-bg: #333;             /*jet*/
+            --error: #B5072A;
         }
 
         .btn-main {
@@ -17,8 +19,17 @@ function ThemeSetter() {
           color: white;
         }
 
+        .btn-main:hover {
+          color: white;
+          background-color: var(--hover-main);
+        }
+
         a {
             color: var(--main-color);
+        }
+
+        a:hover {
+          color: var(--hover-main);
         }
 
         .App, #App-Container {
@@ -52,6 +63,10 @@ function ThemeSetter() {
 
         .nav-main {
             background-color: var(--dark-bg) !important;
+        }
+
+        .error {
+          color: var(--error);
         }
       `}
     </style>

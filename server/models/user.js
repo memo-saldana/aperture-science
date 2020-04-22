@@ -1,9 +1,18 @@
 const mongoose = require('mongoose'),
       jwt = require('jsonwebtoken'),
       validator = require('validator'),
+      crypto = require('crypto'),
+      MyError = require('../models/MyError'),
       bcrypt = require('bcrypt');
 
 let userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, "Name is missing"],
+  },
+  about: {
+    type: String,
+  },
   email: {
     type: String,
     required: [true, "Email is missing"],
@@ -11,16 +20,26 @@ let userSchema = new mongoose.Schema({
       if(!validator.isEmail(value)) {
         throw new Error('Invalid email')
       }
-    }
+    },
   },
   password: {
     type: String,
-    required: [true, "Password is missing"]
+    required: [true, "Password is missing"],
   },
   tokens: [{
     type: String,
+    select: false,
+  }],
+  resetPasswordToken: {
+    type: String,
     select: false
-  }]
+  },
+  resetPasswordExpires: {
+    type: Date,
+    select: false
+  }
+}, {
+  timestamps: true,
 })
 
 // Validate if email is unique - unique option only creates an index
@@ -45,14 +64,14 @@ userSchema.pre('save', function(next) {
 
 userSchema.statics.generateResetToken = async function(email){
   
-  const user = await this.findOne({phone, bActive:true, bVerified: true}).exec();
-
+  const user = await this.findOne({email}).exec();
+  console.log('user :', user);
   if(user){
     // console.log('user found, generating token');
     
     const buffer = crypto.randomBytes(4);
-
-    user.resetPasswordToken = buffer;
+    const token = buffer.toString('hex');
+    user.resetPasswordToken = token;
     //Valid for 1 hour
     user.resetPasswordExpires = Date.now() + 3600000;
     await user.save();
@@ -70,8 +89,6 @@ userSchema.statics.verifyToken = async function(email, token) {
     email,
     resetPasswordToken: token,
     resetPasswordExpires: { $gt: Date.now() },
-    bActive: true,
-    bVerified: true
   }).exec();
   
   if(user){
@@ -82,10 +99,10 @@ userSchema.statics.verifyToken = async function(email, token) {
 }
 
 userSchema.statics.changePassword = async function(userId, password) {
-  const user = await User.findById(userId).exec();
+  const user = await this.findById(userId).exec();
 
   user.password = password;
-  return await user.save({ validateBeforeSave: false });
+  return await user.save();
 }
 
 userSchema.methods.comparePassword = async function (password) {
