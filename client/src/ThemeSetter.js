@@ -80,6 +80,24 @@ function ThemeSetter() {
           color: white;
           z-index: 3;
         }
+
+        .account-image {
+          width: 70%;
+        }
+
+        .account-image img {
+          max-height:100%;
+          max-width: 100%;
+        }
+
+        .title {
+          background-size: cover;
+          background-position: center center;
+          background-repeat: no-repeat;
+          color: white;
+          min-height: 314px;
+          max-height: 100%;
+        }
       `}
     </style>
   );
