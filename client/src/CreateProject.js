@@ -242,7 +242,7 @@ const CreateProject = ({ history }) => {
                   </Card.Body>
                 </Card>
 
-                <Card className="mt-4">
+                <Card className="mt-3">
                   <Card.Body>
                     <Jumbotron
                       style={{
@@ -251,7 +251,7 @@ const CreateProject = ({ history }) => {
                           state.fileURL === "" ? "" : state.fileURL
                         })`,
                       }}
-                      className="title-preview"
+                      className="title-preview mb-3"
                     >
                       <div className="preview-data">
                         <h1>

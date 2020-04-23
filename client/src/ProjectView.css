@@ -1,12 +1,9 @@
-.top-part {
-    margin-top: .5%;
-}
 
-.project-image, .account-image {
+.project-image {
     width: 100%;
 }
 
-.project-image img, .account-image img {
+.project-image img {
     max-height:100%;
     max-width: 100%;
   }
@@ -22,9 +19,4 @@
 .project-description div, .account-info div {
     margin: 10px 0px;
     padding: 5px;
-}
-
-
-.account-border {
-    border: solid black 2px;
 }
