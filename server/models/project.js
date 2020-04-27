@@ -10,6 +10,9 @@ const projectSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     rel: 'User',
   },
+  subtitle: {
+    type: String
+  },
   description: {
     type: String,
     required: [true, "Schedule missing."],
