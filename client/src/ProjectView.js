@@ -1,13 +1,11 @@
 import "./ProjectView.css";
-import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
 import Image from "react-bootstrap/Image";
 import ProgressBar from "react-bootstrap/ProgressBar";
-import React, { useState } from "react";
+import React from "react";
 import Row from "react-bootstrap/Row";
 import Jumbotron from "react-bootstrap/Jumbotron";
 

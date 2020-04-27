@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import React, { useReducer, useEffect, useState } from "react";
 import Row from "react-bootstrap/Row";
+import { getUserId, getToken } from "./TokenUtilities";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
 import { URI } from "./config";
@@ -13,8 +14,7 @@ import { URI } from "./config";
 const initialState = {
   title: "",
   subtitle: "",
-  categories: ["", "Category 1", "Category 2"],
-  selectedCategory: "",
+  selectedCategory: {},
   dateError: "",
   goal: 0.0,
   description: "",
@@ -32,7 +32,7 @@ function checkInputs(state, startDate, endDate, picture) {
   return !(
     state.title === "" ||
     state.subtitle === "" ||
-    state.selectedCategory === "" ||
+    state.selectedCategory === categories[0] ||
     state.description === "" ||
     picture === null ||
     startDate === null ||
@@ -55,14 +55,10 @@ const dateParser = (dateStr) => {
 
 const CreateProject = ({ history }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [categories, setCategories] = useState([]);
   const [picture, setPicture] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-
-  useEffect(() => {
-    dispatch({ field: "selectedCategory", value: state.categories[0] });
-    bsCustomFileInput.init();
-  }, [state.categories]);
 
   useEffect(() => {
     const today = new Date();
@@ -78,17 +74,34 @@ const CreateProject = ({ history }) => {
     return dispatch({ field: "dateError", value: errorMsg });
   }, [startDate, endDate]);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const { data } = await axios(`${URI}/api/categories`);
+
+      bsCustomFileInput.init();
+      const updatedCategories = [{ _id: 0, name: "-" }, ...data];
+      dispatch({ field: "selectedCategory", value: updatedCategories[0] });
+      setCategories(updatedCategories);
+    };
+
+    fetchCategories();
+  }, []);
+
   const onChange = (e) => {
     const name = e.target.name;
+
     if (name === "picture" && typeof e.target.files[0] !== "undefined") {
       setPicture(e.target.files[0]);
       dispatch({
         field: "fileURL",
         value: URL.createObjectURL(e.target.files[0]),
       });
-    } else if (e.target.name === "startDate" || e.target.name === "endDate") {
+    } else if (name === "startDate" || name === "endDate") {
       let date = dateParser(e.target.value);
       name === "startDate" ? setStartDate(date) : setEndDate(date);
+    } else if (name === "selectedCategory") {
+      const selectedCat = categories.find((cat) => cat.name === e.target.value);
+      return dispatch({ field: name, value: selectedCat });
     } else {
       dispatch({ field: name, value: e.target.value });
     }
@@ -99,22 +112,31 @@ const CreateProject = ({ history }) => {
       checkInputs(state, startDate, endDate, picture) &&
       state.dateError === ""
     ) {
+      /*  
       let fd = new FormData();
+      fd.append("picture", picture, picture.name); 
+      */
 
-      fd.append("title", state.title);
-      fd.append("subtitle", state.subtitle);
-      fd.append("category", state.selectedCategory);
-      fd.append("campaignStart", startDate);
-      fd.append("campaignEnd", endDate);
-      fd.append("goal", state.goal);
-      fd.append("description", state.description);
-      fd.append("picture", picture, picture.name);
+      const data = {
+        title: state.title,
+        subtitle: state.subtitle,
+        description: state.description,
+        category: state.selectedCategory,
+        goal: state.goal,
+        campaignStart: startDate,
+        campaignEnd: endDate,
+      };
+
+      const userId = getUserId();
 
       return axios
-        .post(URI + "/api/projects", fd)
-        .then((response) => {
-          console.log(response);
-          return null;
+        .post(URI + `/api/users/${userId}/projects`, data, {
+          headers: {
+            Authorization: `Bearer: ${getToken()}`,
+          },
+        })
+        .then((response) => {;
+          return response;
         })
         .catch((error) => {
           if (error.response) {
@@ -122,20 +144,19 @@ const CreateProject = ({ history }) => {
           } else return error.message;
         });
     }
-    console.log("faltaron datos o hay error");
   };
 
   const _postProject = async (e) => {
     e.preventDefault();
     let respError = await _postHandler();
     if (respError) {
-      console.log(respError);
+      return respError;
     } else {
-      console.log("sent data?");
       //history.push("/");
     }
   };
 
+  console.log(categories);
   return (
     <Container fluid>
       <Row id="App-Container" className="justify-content-center">
@@ -178,8 +199,10 @@ const CreateProject = ({ history }) => {
                         name="selectedCategory"
                         onChange={onChange}
                       >
-                        {state.categories.map((category) => {
-                          return <option key={category}>{category}</option>;
+                        {categories.map((category) => {
+                          return (
+                            <option key={category._id}>{category.name}</option>
+                          );
                         })}
                       </Form.Control>
                     </Form.Group>
