@@ -23,7 +23,7 @@ ctr.create = () => async (req, res, next) => {
   const {projectData} = req.body;
   const {userId} = req.params;
 
-  let user = await User.findOne({_id: userId, bActive: true}).exec();
+  let user = await User.findOne({_id: userId}).exec();
 
   if (!user) {
     throw new MyError(400, 'Owner does not exist')
@@ -39,7 +39,7 @@ ctr.update = () => async (req, res, next) => {
   const {userId, projectId} = req.params;
   const projectBody = req.params;
 
-  let user = await User.findOne({_id: userId, bActive: true}).exec();
+  let user = await User.findOne({_id: userId}).exec();
 
   if (!user) {
     throw new MyError(400, 'Owner does not exist')
@@ -52,7 +52,7 @@ ctr.update = () => async (req, res, next) => {
 ctr.delete = () => async (req, res, next) => {
   const {userId, projectId} = req.params;
 
-  let user = await User.findOne({_id: userId, bActive: true}).exec();
+  let user = await User.findOne({_id: userId}).exec();
 
   if (!user) {
     throw new MyError(400, 'Owner does not exist')
