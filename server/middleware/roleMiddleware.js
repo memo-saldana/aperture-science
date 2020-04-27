@@ -33,6 +33,9 @@ mw.isOwnerOrAdmin = async (req, res, next) =>{
   console.log('token :>> ', token);
 
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
+  
+  console.log('data :>> ', data);
+  
   const user = await User.findById(data.id).select('+role').exec();
   
   console.log('user :>> ', user);
