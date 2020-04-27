@@ -22,7 +22,7 @@ require('./config/dbSetup');
 
 app.use(logger('dev'));
 app.use(cors());
-// app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
 
 // Serves build
