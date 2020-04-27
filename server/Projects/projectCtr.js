@@ -1,4 +1,5 @@
 const Project = require('../models/project'),
+      User = require('../models/user'),
       ctr = {};
 
 ctr.getAll = () => async (req, res, next) => {
@@ -19,8 +20,14 @@ ctr.getOne = () => async (req, res, next) => {
 
 ctr.create = () => async (req, res, next) => {
   const {projectData} = req.body;
+  const {userId} = req.params;
 
-  const project = new Project(projectData);
+  let user = await User.findOne({_id: userId, bActive: true}).exec();
+
+  if (!user) {
+    throw new MyError(400, 'Owner does not exist')
+  }
+  const project = new Project({...projectData, owner: user});
 
   await project.save();
 
@@ -28,18 +35,28 @@ ctr.create = () => async (req, res, next) => {
 }
 
 ctr.update = () => async (req, res, next) => {
-  const {projectId} = req.params;
+  const {userId, projectId} = req.params;
   const projectBody = req.params;
 
-  const project = await Project.updateProject(projectId, projectBody);
+  let user = await User.findOne({_id: userId, bActive: true}).exec();
+
+  if (!user) {
+    throw new MyError(400, 'Owner does not exist')
+  }
+  const project = await Project.updateProject(projectId, user._id, projectBody);
 
   return res.status(200).json({project});
 }
 
 ctr.delete = () => async (req, res, next) => {
-  const {projectId} = req.params;
+  const {userId, projectId} = req.params;
 
-  const project = await Project.deactivate(projectId);
+  let user = await User.findOne({_id: userId, bActive: true}).exec();
+
+  if (!user) {
+    throw new MyError(400, 'Owner does not exist')
+  }
+  const project = await Project.deactivate(projectId, user._id);
 
   return res.status(200).json({project});
 }

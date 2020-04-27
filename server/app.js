@@ -30,7 +30,7 @@ app.use(express.static(path.resolve('./client/build')));
 
 // Routes
 app.use('/api', authRoutes);
-app.use('/api/projects', projectRoutes); 
+app.use('/api/users/:userId/projects', projectRoutes); 
 app.use('/api/categories', categoryRoutes); 
 // Error handling
 app.use(eHandler());

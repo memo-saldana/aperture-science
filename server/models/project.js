@@ -6,7 +6,11 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: [true, "Title missing."],
   },
-  schedule: {
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    rel: 'User',
+  },
+  description: {
     type: String,
     required: [true, "Schedule missing."],
   },
@@ -67,8 +71,8 @@ projectSchema.statics.getOneById = async function(projectId) {
   return project;
 }
 
-projectSchema.statics.deactivate = async function(projectId) {
-  const project = await this.findOneAndUpdate({_id: projectId, bActive: true}, {bActive: true}, {new: true}).exec();
+projectSchema.statics.deactivate = async function(projectId, userId) {
+  const project = await this.findOneAndUpdate({_id: projectId, owner: userId, bActive: true}, {bActive: true}, {new: true}).exec();
 
   if(!project) {
     return Promise.reject(new MyError(404, "Project not found."));
@@ -76,8 +80,8 @@ projectSchema.statics.deactivate = async function(projectId) {
   return project;
 }
 
-projectSchema.statics.updateProject = async function(projectId, projectData) {
-  const project = await this.findOneAndUpdate({_id: projectId, bActive: true}, projectData, {new: true}).exec();
+projectSchema.statics.updateProject = async function(projectId, userId, projectData) {
+  const project = await this.findOneAndUpdate({_id: projectId, owner: userId, bActive: true}, projectData, {new: true}).exec();
 
   if(!project) {
     return Promise.reject(new MyError(404, "Project not found."));
