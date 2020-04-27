@@ -156,7 +156,6 @@ const CreateProject = ({ history }) => {
     }
   };
 
-  console.log(categories);
   return (
     <Container fluid>
       <Row id="App-Container" className="justify-content-center">
