@@ -30,8 +30,13 @@ mw.isOwnerOrAdmin = async (req, res, next) =>{
   if (!token) {
     return Promise.reject(new MyError(401, 'Inicie sesión'));
   }
+  console.log('token :>> ', token);
+
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
   const user = await User.findById(data.id).select('+role').exec();
+  
+  console.log('user :>> ', user);
+  
   if (user && !user.tokens.in(token)) {
     return Promise.reject(new MyError(405,
         'La sesión ha expirado, favor de iniciar sesión nuevamente'));
