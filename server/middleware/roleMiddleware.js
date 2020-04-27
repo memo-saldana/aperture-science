@@ -10,7 +10,7 @@ mw.isAdmin = async (req, res, next) =>{
   }
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
   const user = await User.findById(data._id).select('+role +bActive').exec();
-  if (user && !user.tokens.includes(token)) {
+  if (user && !user.tokens.includes(token.split(' ')[1])) {
     return Promise.reject(new MyError(405,
         'La sesión ha expirado, favor de iniciar sesión nuevamente'));
   }
@@ -40,7 +40,7 @@ mw.isOwnerOrAdmin = async (req, res, next) =>{
   
   console.log('user :>> ', user);
   
-  if (user && !user.tokens.includes(token)) {
+  if (user && !user.tokens.includes(token.split(' ')[1])) {
     return Promise.reject(new MyError(405,
         'La sesión ha expirado, favor de iniciar sesión nuevamente'));
   }
