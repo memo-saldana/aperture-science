@@ -1,5 +1,6 @@
 const Project = require('../models/project'),
       User = require('../models/user'),
+      MyError = require('../middleware/MyError'),
       ctr = {};
 
 ctr.getAll = () => async (req, res, next) => {
