@@ -20,7 +20,7 @@ ctr.getOne = () => async (req, res, next) => {
 }
 
 ctr.create = () => async (req, res, next) => {
-  const {projectData} = req.body;
+  const projectData = req.body;
   const {userId} = req.params;
   console.log('projectData :>> ', projectData);
   let user = await User.findOne({_id: userId}).exec();
