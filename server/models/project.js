@@ -15,7 +15,6 @@ const projectSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: [true, "Schedule missing."],
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,

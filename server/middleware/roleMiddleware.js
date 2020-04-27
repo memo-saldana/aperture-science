@@ -30,15 +30,9 @@ mw.isOwnerOrAdmin = async (req, res, next) =>{
   if (!token) {
     return Promise.reject(new MyError(401, 'Inicie sesión'));
   }
-  console.log('token :>> ', token);
 
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
-  
-  console.log('data :>> ', data);
-
   const user = await User.findById(data._id).select('+role').exec();
-  
-  console.log('user :>> ', user);
   
   if (user && !user.tokens.includes(token.split(' ')[1])) {
     return Promise.reject(new MyError(405,
