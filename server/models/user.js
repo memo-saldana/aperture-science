@@ -3,6 +3,7 @@ const mongoose = require('mongoose'),
       validator = require('validator'),
       crypto = require('crypto'),
       MyError = require('../models/MyError'),
+      stripe = require('../services/stripe'),
       bcrypt = require('bcrypt');
 
 let userSchema = new mongoose.Schema({
@@ -41,6 +42,18 @@ let userSchema = new mongoose.Schema({
   role: {
     type: String,
     default: "user",
+    select: false,
+  },
+  state: {
+    type: String,
+    select: false
+  },
+  stateExpires: {
+    type: Date,
+    select: false,
+  },
+  stripeId: {
+    type: String,
     select: false,
   }
 }, {
@@ -123,6 +136,38 @@ userSchema.methods.generateToken = async function() {
   user.tokens.push(token);
   await user.save();
   return token;
+}
+
+userSchema.methods.generateState = async function() {
+  const buffer = crypto.randomBytes(4);
+  const token = buffer.toString('hex');
+  user.state = token;
+  //Valid for 1 hour
+  user.stateExpires = Date.now() + 3600000;
+  await user.save();
+  return token;
+}
+
+userSchema.statics.verifyState = async function(state) {
+  const stateTokens = state.split('-');
+  const userId = stateTokens[0];
+  const token = stateTokens[1];
+
+  const user = await this.findOne({
+    _id: userId,
+    state: token, 
+    stateExpires: { $gt: Date.now() },
+  }).exec();
+
+  return user? user : Promise.reject(new MyError(404, 'User not found'));
+}
+
+userSchema.methods.linkStripe = async function(code) {
+  const id = await stripe.linkAccount(code);
+
+  this.stripeId = id;
+
+  return await this.save();
 }
 
 module.exports = mongoose.model('User',userSchema);

@@ -8,7 +8,6 @@ const express = require('express'),
       bodyParser = require('body-parser'),
       path = require('path'),
       PORT = process.env.PORT || 3000,
-      aHandler = require('express-async-handler'),
       eHandler = require('./middleware/errorHandling'),
       sendAsJSON = require('./middleware/sendAsJson'),
       adminConfig = require('./config/adminSetup'),
@@ -16,6 +15,7 @@ const express = require('express'),
       projectRoutes = require('./Projects'),
       authRoutes = require('./Authentication');
       categoryRoutes = require('./Categories');
+      paymentRoutes = require('./Payment');
 
 // DB Setup
 require('./config/dbSetup');
@@ -30,8 +30,10 @@ app.use(express.static(path.resolve('./client/build')));
 
 // Routes
 app.use('/api', authRoutes);
+app.use('/api', paymentRoutes);
 app.use('/api/users/:userId/projects', projectRoutes); 
 app.use('/api/categories', categoryRoutes); 
+
 // Error handling
 app.use(eHandler());
 app.use(sendAsJSON());
