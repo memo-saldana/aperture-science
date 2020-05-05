@@ -1,15 +1,47 @@
 import "./ProjectView.css";
+import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
-import ProgressBar from "react-bootstrap/ProgressBar";
-import React from "react";
-import Row from "react-bootstrap/Row";
 import Jumbotron from "react-bootstrap/Jumbotron";
+import ProgressBar from "react-bootstrap/ProgressBar";
+import React, { useEffect, useReducer } from "react";
+import Row from "react-bootstrap/Row";
+import { URI } from "./config";
+
+const initialState = {
+  title: "",
+  subtitle: "",
+  description: "",
+  progress: "",
+  picture: ""
+}
+
+function reducer(state, { field, value }) {
+  return {
+    ...state,
+    [field]: value,
+  };
+}
+
 
 const ProjectView = () => {
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect( () => {
+    const fetchData = async () => {
+      const { data } = await axios( `${URI}/api/projects/5eb1b968b365fa0017baec74`);
+      
+      console.log("fetch from: " + URI + "/api/projects/5eb1b968b365fa0017baec74")
+      console.log("project data: " + data);
+    }
+
+    fetchData();
+  }, []);
+
   return (
     <Container fluid>
       <Row id="App-Container" className="justify-content-center">
@@ -50,7 +82,7 @@ const ProjectView = () => {
           <Row>
             <Col xs={12} md={9} className="project-description">
               <Card>
-                <Card.Body class="card-text">
+                <Card.Body className="card-text">
                   <div>
                     Lorem Ipsum is simply dummy text of the printing and
                     typesetting industry. Lorem Ipsum has been the industry's
@@ -104,7 +136,7 @@ const ProjectView = () => {
             </Col>
             <Col xs={12} md={3} className="project-description">
               <Card>
-                <Card.Body class="card-text p-3">
+                <Card.Body className="card-text p-3">
                   <Image
                     className="account-image rounded-circle mx-auto d-block mb-3"
                     src="https://cdn2.f-cdn.com/contestentries/1316431/24595406/5ae8a3f2e4e98_thumb900.jpg"

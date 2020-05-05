@@ -1,24 +1,29 @@
+import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
+import { getUserId, getToken } from "./TokenUtilities";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import React, { useReducer, useEffect, useState } from "react";
 import Row from "react-bootstrap/Row";
-import { getUserId, getToken } from "./TokenUtilities";
-import bsCustomFileInput from "bs-custom-file-input";
-import axios from "axios";
 import { URI } from "./config";
 
 const initialState = {
   title: "",
+  titleError: "",
   subtitle: "",
+  subtitleError: "",
   selectedCategory: {},
+  selectedCategoryError: "",
   dateError: "",
-  goal: 0.0,
+  goal: 10.0,
   description: "",
+  descriptionError: "",
   fileURL: "",
+  fileURLError: "",
+  disabled: true,
 };
 
 function reducer(state, { field, value }) {
@@ -29,20 +34,19 @@ function reducer(state, { field, value }) {
 }
 
 function whiteSpaceOrEmpty(input) {
-  return /^\s*$/i.test(input);
+  return !/^\s*$/i.test(input);
 }
 
-function checkInputs(state, startDate, endDate, picture, categories) {
+function checkInputs(state, startDate, endDate, categories) {
   let data = [state.title, state.subtitle, state.description, state.fileURL];
+  const isvalid = data.every((elem) => whiteSpaceOrEmpty(elem));
 
-  return !(
-    state.title === "" ||
-    state.subtitle === "" ||
-    state.selectedCategory === categories[0] ||
-    state.description === "" ||
-    startDate === null ||
-    endDate === null ||
-    state.goal <= 0.0
+  return (
+    isvalid &&
+    state.selectedCategory !== categories[0] &&
+    startDate !== null &&
+    endDate !== null &&
+    state.dateError === ""
   );
 }
 
@@ -82,7 +86,6 @@ const CreateProject = ({ history }) => {
     const fetchCategories = async () => {
       const { data } = await axios(`${URI}/api/categories`);
 
-      bsCustomFileInput.init();
       const updatedCategories = [{ _id: 0, name: "-" }, ...data];
       dispatch({ field: "selectedCategory", value: updatedCategories[0] });
       setCategories(updatedCategories);
@@ -92,20 +95,38 @@ const CreateProject = ({ history }) => {
   }, []);
 
   const onChange = (e) => {
-    const { name, value } = e.target;
-    
+    let { name, value } = e.target;
+
     if (name === "startDate" || name === "endDate") {
       let date = dateParser(value);
       name === "startDate" ? setStartDate(date) : setEndDate(date);
     } else if (name === "selectedCategory") {
       const selectedCat = categories.find((cat) => cat.name === value);
-      return dispatch({ field: name, value: selectedCat });
+      selectedCat === categories[0]
+        ? dispatch({
+            field: name + "Error",
+            value: " Please select a category with value",
+          })
+        : dispatch({ field: name + "Error", value: "" });
+      dispatch({ field: name, value: selectedCat });
     } else {
+      if (name === "goal") {
+        value = parseFloat(value);
+      } else {
+        let emptyorws = !whiteSpaceOrEmpty(value);
+        emptyorws
+          ? dispatch({
+              field: name + "Error",
+              value: " This field cannot be empty or whitespace",
+            })
+          : dispatch({ field: name + "Error", value: "" });
+      }
       dispatch({ field: name, value: value });
     }
   };
 
   const _postHandler = (_) => {
+    console.log(checkInputs(state, startDate, endDate, categories));
     if (
       checkInputs(state, startDate, endDate, categories) &&
       state.dateError === ""
@@ -118,6 +139,7 @@ const CreateProject = ({ history }) => {
         goal: state.goal,
         campaignStart: startDate,
         campaignEnd: endDate,
+        picture: state.fileURL,
       };
 
       const userId = getUserId();
@@ -145,7 +167,7 @@ const CreateProject = ({ history }) => {
     if (respError) {
       return respError;
     } else {
-      //history.push("/");
+      history.push("/");
     }
   };
 
@@ -161,7 +183,10 @@ const CreateProject = ({ history }) => {
                     <h1 className="display-6">General</h1>
 
                     <Form.Group controlId="formProjectTitle">
-                      <Form.Label>Project title</Form.Label>
+                      <Form.Label>
+                        Project title
+                        <span className="error">{state.titleError}</span>
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         placeholder="Title"
@@ -171,7 +196,10 @@ const CreateProject = ({ history }) => {
                     </Form.Group>
 
                     <Form.Group controlId="formProjectSubtitle">
-                      <Form.Label>Project Subtitle</Form.Label>
+                      <Form.Label>
+                        Project Subtitle
+                        <span className="error">{state.subtitleError}</span>
+                      </Form.Label>
                       <Form.Control
                         as="textarea"
                         rows="2"
@@ -185,15 +213,22 @@ const CreateProject = ({ history }) => {
                     </Form.Group>
 
                     <Form.Group controlId="formProjectCategory">
-                      <Form.Label>Category</Form.Label>
+                      <Form.Label>
+                        Category
+                        <span className="error">
+                          {state.selectedCategoryError}
+                        </span>
+                      </Form.Label>
                       <Form.Control
                         as="select"
                         name="selectedCategory"
                         onChange={onChange}
                       >
-                        {categories.map((category) => {
+                        {categories.map((category, index) => {
                           return (
-                            <option key={category._id}>{category.name}</option>
+                            <option key={category._id || index}>
+                              {category.name}
+                            </option>
                           );
                         })}
                       </Form.Control>
@@ -230,11 +265,11 @@ const CreateProject = ({ history }) => {
                       <Form.Label>Goal amount</Form.Label>
                       <Form.Control
                         type="number"
-                        placeholder="0.00"
                         step="0.01"
                         name="goal"
                         onChange={onChange}
-                        min={0.0}
+                        min={state.goal}
+                        value={state.goal}
                       />
                     </Form.Group>
                   </Card.Body>
@@ -245,6 +280,7 @@ const CreateProject = ({ history }) => {
                 <Card className="mt-4">
                   <Card.Body>
                     <h1 className="display-6">Project Description</h1>
+                    <span className="error">{state.descriptionError}</span>
                     <Form.Group controlId="formBasicDescription">
                       <Form.Control
                         as="textarea"
@@ -259,7 +295,7 @@ const CreateProject = ({ history }) => {
 
                 <Card className="mt-4">
                   <Card.Body>
-                  <h1 className="display-6">Project Picture</h1>
+                    <h1 className="display-6">Project Picture</h1>
                     <Jumbotron
                       style={{
                         position: `relative`,
@@ -280,6 +316,7 @@ const CreateProject = ({ history }) => {
                         </p>
                       </div>
                     </Jumbotron>
+                    <span className="error">{state.fileURLError}</span>
                     <Form.Control
                       type="text"
                       placeholder="Image URL"
@@ -290,9 +327,8 @@ const CreateProject = ({ history }) => {
                 </Card>
               </Form.Group>
             </Form.Row>
-            <Button variant="main" onClick={_postProject} disabled={false}>
-              {" "}
-              Create Project{" "}
+            <Button variant="main" onClick={_postProject}>
+              Create Project
             </Button>
           </Form>
         </Container>

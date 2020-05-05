@@ -1,13 +1,13 @@
+import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
+import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import Row from "react-bootstrap/Row";
-import { Link } from "react-router-dom";
 import { URI } from "./config";
-import axios from "axios";
 
 function checkInputs(email, password) {
   if (email !== "" && password !== "") {
@@ -16,7 +16,7 @@ function checkInputs(email, password) {
   return false;
 }
 
-const Login = props => {
+const Login = ({history, loginHandler}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,7 +28,7 @@ const Login = props => {
     if (respError) {
       setError(respError);
     } else {
-      props.history.push("/");
+      history.push("/");
     }
   };
 
@@ -42,6 +42,7 @@ const Login = props => {
         .then(response => {
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("userId", response.data.user._id);
+          loginHandler(true);
           return null;
         })
         .catch(error => {

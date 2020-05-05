@@ -1,22 +1,29 @@
 import AccountEmail from './AccountRecovery_Email';
 import AccountPassword from './AccountRecovery_Password';
+import { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import CreateProject from './CreateProject';
 import Login from './Login';
-import React from "react";
+import ProjectView from './ProjectView';
+import React, { useState } from "react";
 import Signup from './Signup';
 import Test from './Test';
 import Themer from './ThemeSetter';
-import ProjectView from './ProjectView';
-import { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import TopNavbar from './TopNavbar';
+import { getToken } from './TokenUtilities';
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(getToken());
+  
+  console.log(loggedIn);
   return (
     <Router>
       <Themer />
-      <TopNavbar />
+      <TopNavbar status={loggedIn} />
       <Switch>
-        <Route path="/login" component={Login}/>
+        <Route
+          path="/login"
+          render = {(props) => (<Login {...props} loginHandler={setLoggedIn} />)}
+        />
         <Route path="/signup" component={Signup}/>
         <Route path="/recovery-email" component={AccountEmail} />
         <Route path="/recovery-password" component={AccountPassword} />
