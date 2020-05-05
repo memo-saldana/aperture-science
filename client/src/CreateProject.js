@@ -50,7 +50,7 @@ function checkInputs(state, startDate, endDate, categories) {
   );
 }
 
-const dateParser = (dateStr) => {
+ export const dateParser = (dateStr) => {
   let data = dateStr.split("-");
   let date = {
     year: parseInt(data[0]),

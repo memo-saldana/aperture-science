@@ -14,7 +14,6 @@ import { getToken } from './TokenUtilities';
 function App() {
   const [loggedIn, setLoggedIn] = useState(getToken());
   
-  console.log(loggedIn);
   return (
     <Router>
       <Themer />

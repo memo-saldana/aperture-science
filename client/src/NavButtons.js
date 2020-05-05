@@ -3,7 +3,7 @@ import Nav from 'react-bootstrap/Nav';
 import React from 'react';
 
 const NavButtons = ({ loggedIn, _logout }) => {
-    console.log(loggedIn);
+    
     const loggedInButtons = (
         <Nav className="justify-content-end" style={{ width: "100%" }}>
             <Nav.Link href="/project">Project (Template)</Nav.Link>
