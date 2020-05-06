@@ -25,7 +25,7 @@ mw.isAdmin = async (req, res, next) =>{
   }
 };
 
-mw.isLoggedIn = async (req, res, next) =>{
+mw.checkLogin = async (req, res, next) =>{
   const token = req.headers['authorization'];
   if (!token) {
     return Promise.reject(new MyError(401, 'Inicie sesión'));

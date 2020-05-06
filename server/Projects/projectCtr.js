@@ -4,9 +4,9 @@ const Project = require('../models/project'),
       ctr = {};
 
 ctr.getAll = () => async (req, res, next) => {
-  const {page, pageSize} = req.query;
+  const {page, pageSize, category} = req.query;
 
-  const body = await Project.getAll(page, pageSize);
+  const body = await Project.getAll(page, pageSize, category);
 
   return res.status(200).json(body);
 }

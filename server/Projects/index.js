@@ -12,17 +12,17 @@ router.get('/:projectId',
   aHandler( projectCtr.getOne() ),
 );
 
-router.post('/',
+router.post('/users/:userId/projects',
   aHandler( isOwnerOrAdmin ),
   aHandler( projectCtr.create() ),
 );
 
-router.put('/:projectId',
+router.put('/users/:userId/projects/:projectId',
   aHandler( isOwnerOrAdmin ),
   aHandler( projectCtr.update() ),
 );
 
-router.delete('/:projectId',
+router.delete('/users/:userId/projects/:projectId',
   aHandler( isOwnerOrAdmin ),
   aHandler( projectCtr.delete() ),
 );

@@ -170,4 +170,22 @@ userSchema.methods.linkStripe = async function(code) {
   return await this.save();
 }
 
+userSchema.statics.getAll = async function(page, pageSize) {
+  page = parseInt(page) || 1;
+  pageSize = parseInt(pageSize) || 10;
+
+  pageSize = pageSize > 0 ? pageSize : 10; 
+  page = page > 0 ? page - 1: 0;
+  
+  const [projects, count] = Promise.all([
+    this.find({})
+           .skip(page * pageSize)
+           .limit(pageSize)
+           .exec(),
+    this.countDocuments({})
+  ])
+
+  return {projects, page, totalPages: Math.ceil(count/pageSize)}
+}
+
 module.exports = mongoose.model('User',userSchema);

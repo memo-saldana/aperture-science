@@ -32,7 +32,7 @@ app.use(express.static(path.resolve('./client/build')));
 // Routes
 app.use('/api', authRoutes);
 app.use('/api', paymentRoutes);
-app.use('/api/users/:userId/projects', projectRoutes); 
+app.use('/api/', projectRoutes); 
 app.use('/api/categories', categoryRoutes); 
 app.use('/api/users', userRoutes);
 

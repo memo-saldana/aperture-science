@@ -46,19 +46,24 @@ const projectSchema = new mongoose.Schema({
 })
 
 projectSchema.statics.getAll = async function(page, pageSize) {
+  const query = {bActive: true}
   page = parseInt(page) || 1;
   pageSize = parseInt(pageSize) || 10;
 
   pageSize = pageSize > 0 ? pageSize : 10; 
   page = page > 0 ? page - 1: 0;
   
+  if(category && category.length > 0) {
+    query.category = category
+  }
+
   const [projects, count] = Promise.all([
-    this.find({bActive: true})
+    this.find(query)
            .skip(page * pageSize)
            .limit(pageSize)
            .populate('owner')
            .exec(),
-    this.countDocuments({bActive: true})
+    this.countDocuments(query)
   ])
 
   return {projects, page, totalPages: Math.ceil(count/pageSize)}
