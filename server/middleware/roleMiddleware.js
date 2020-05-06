@@ -25,6 +25,26 @@ mw.isAdmin = async (req, res, next) =>{
   }
 };
 
+mw.isLoggedIn = async (req, res, next) =>{
+  const token = req.headers['authorization'];
+  if (!token) {
+    return Promise.reject(new MyError(401, 'Inicie sesión'));
+  }
+  const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
+  const user = await User.findById(data._id).select('+role +bActive').exec();
+  if (user && !user.tokens.includes(token.split(' ')[1])) {
+    return Promise.reject(new MyError(405,
+        'La sesión ha expirado, favor de iniciar sesión nuevamente'));
+  }
+
+  if (user) {
+    req.user = user;
+    next();
+  } else {
+    return Promise.reject( new MyError(404, 'No se encontró el usuario'));
+  }
+};
+
 mw.isOwnerOrAdmin = async (req, res, next) =>{
   const token = req.headers['authorization'];
   if (!token) {

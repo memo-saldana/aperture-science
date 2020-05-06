@@ -16,6 +16,7 @@ const express = require('express'),
       authRoutes = require('./Authentication');
       categoryRoutes = require('./Categories');
       paymentRoutes = require('./Payment');
+      userRoutes = require('./User');
 
 // DB Setup
 require('./config/dbSetup');
@@ -33,6 +34,7 @@ app.use('/api', authRoutes);
 app.use('/api', paymentRoutes);
 app.use('/api/users/:userId/projects', projectRoutes); 
 app.use('/api/categories', categoryRoutes); 
+app.use('/api/users', userRoutes);
 
 // Error handling
 app.use(eHandler());
