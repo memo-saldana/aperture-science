@@ -4,11 +4,11 @@ const express = require("express"),
       {isOwnerOrAdmin} = require('../middleware/roleMiddleware'),
       projectCtr = require('./projectCtr');
 
-router.get('/',
+router.get('/projects',
   aHandler( projectCtr.getAll() ),
 );
 
-router.get('/:projectId',
+router.get('/projects/:projectId',
   aHandler( projectCtr.getOne() ),
 );
 
