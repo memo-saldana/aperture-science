@@ -8,19 +8,22 @@ const express = require('express'),
       bodyParser = require('body-parser'),
       path = require('path'),
       PORT = process.env.PORT || 3000,
-      aHandler = require('express-async-handler'),
       eHandler = require('./middleware/errorHandling'),
       sendAsJSON = require('./middleware/sendAsJson'),
+      adminConfig = require('./config/adminSetup'),
       // Routers
       projectRoutes = require('./Projects'),
       authRoutes = require('./Authentication');
+      categoryRoutes = require('./Categories');
+      paymentRoutes = require('./Payment');
+      userRoutes = require('./User');
 
 // DB Setup
 require('./config/dbSetup');
 
 app.use(logger('dev'));
 app.use(cors());
-// app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
 
 // Serves build
@@ -28,7 +31,11 @@ app.use(express.static(path.resolve('./client/build')));
 
 // Routes
 app.use('/api', authRoutes);
-app.use('/api/projects', projectRoutes); 
+app.use('/api', paymentRoutes);
+app.use('/api/users/:userId/projects', projectRoutes); 
+app.use('/api/categories', categoryRoutes); 
+app.use('/api/users', userRoutes);
+
 // Error handling
 app.use(eHandler());
 app.use(sendAsJSON());
@@ -43,5 +50,8 @@ app.get('/*', (req,res) => {
 })
 
 app.listen(PORT, _ => {
-  console.log('Server up and running on port ' + PORT)
-})
+  adminConfig()
+  .then(_ => {
+    console.log('Server up and running on port ' + PORT)
+  });
+});
