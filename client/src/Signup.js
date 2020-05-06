@@ -144,6 +144,11 @@ const Signup = props => {
                   Sign up
                 </Button>
               </Form>
+              <Button id="stripeBtn">
+                <a href="https://connect.stripe.com/oauth/authorize?client_id=ca_H8sVQtZQ9URkeJKBgInu8Dck8gVKXcj7&state={STATE_VALUE}&scope=read_write&response_type=code&stripe_user[email]=user@example.com&stripe_user[url]=example.com">
+                <img src="https://i.imgur.com/fHwJ011.png"></img>
+                </a>
+              </Button>
               <div className="d-flex justify-content-center">
                 <p>Have an account? &nbsp;</p>
                 <Link to="/login">
