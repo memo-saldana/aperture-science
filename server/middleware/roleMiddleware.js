@@ -28,7 +28,7 @@ mw.isAdmin = async (req, res, next) =>{
 mw.checkLogin = async (req, res, next) =>{
   const token = req.headers['authorization'];
   if (!token) {
-    next();
+    return next();
   }
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
   const user = await User.findById(data._id).select('+role +bActive').exec();
