@@ -177,7 +177,7 @@ userSchema.statics.getAll = async function(page, pageSize) {
   pageSize = pageSize > 0 ? pageSize : 10; 
   page = page > 0 ? page - 1: 0;
   
-  const [projects, count] = Promise.all([
+  const [projects, count] = await Promise.all([
     this.find({})
            .skip(page * pageSize)
            .limit(pageSize)

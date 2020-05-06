@@ -4,10 +4,10 @@ const express = require("express"),
       {isOwnerOrAdmin, checkLogin} = require('../middleware/roleMiddleware'),
       userCtr = require('./userCtr');
 
-// router.get('/',
-//   aHandler( isOwnerOrAdmin ),
-//   aHandler( userCtr.getAll() ),
-// );
+router.get('/',
+  aHandler( isOwnerOrAdmin ),
+  aHandler( userCtr.getAll() ),
+);
 
 router.get('/:userId',
   aHandler( checkLogin ),

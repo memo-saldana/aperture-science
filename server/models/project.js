@@ -57,7 +57,7 @@ projectSchema.statics.getAll = async function(page, pageSize, category) {
     query.category = category
   }
 
-  const [projects, count] = Promise.all([
+  const [projects, count] = await Promise.all([
     this.find(query)
            .skip(page * pageSize)
            .limit(pageSize)
