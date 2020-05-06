@@ -45,7 +45,7 @@ const projectSchema = new mongoose.Schema({
   timestamps: true,
 })
 
-projectSchema.statics.getAll = async function(page, pageSize) {
+projectSchema.statics.getAll = async function(page, pageSize, category) {
   const query = {bActive: true}
   page = parseInt(page) || 1;
   pageSize = parseInt(pageSize) || 10;
