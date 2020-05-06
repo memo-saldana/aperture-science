@@ -8,6 +8,7 @@ import ProjectView from './ProjectView';
 import Account from './Account'
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import TopNavbar from './TopNavbar';
+import PaymentsTest from './PaymentsTest'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/recovery-password" component={AccountPassword} />
         <Route path="/project" component={ProjectView} />
         <Route path="/account" component={Account} />
+        <Route path="/test" component={PaymentsTest} />
       </Switch>
     </Router>
   );
