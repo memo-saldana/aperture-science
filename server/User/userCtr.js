@@ -15,8 +15,8 @@ ctr.getOne = () => async (req, res, next) => {
   
   const query = User.findOne({_id: userId})
 
-  if(req.user._id.toString() !== userId) {
-    query.select('name about')
+  if(!req.user || req.user && req.user._id.toString() !== userId) {
+    query.select('name about');
   }
 
   const user = await query.exec();

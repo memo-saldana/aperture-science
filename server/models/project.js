@@ -56,6 +56,7 @@ projectSchema.statics.getAll = async function(page, pageSize) {
     this.find({bActive: true})
            .skip(page * pageSize)
            .limit(pageSize)
+           .populate('owner')
            .exec(),
     this.countDocuments({bActive: true})
   ])
@@ -64,7 +65,7 @@ projectSchema.statics.getAll = async function(page, pageSize) {
 }
 
 projectSchema.statics.getOneById = async function(projectId) {
-  const project = await this.findOne({bActive: true, _id: projectId}).exec();
+  const project = await this.findOne({bActive: true, _id: projectId}).populate('owner').exec();
 
   if(!project) {
     return Promise.reject(new MyError(404, "Project not found."));

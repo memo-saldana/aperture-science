@@ -39,10 +39,8 @@ mw.isLoggedIn = async (req, res, next) =>{
 
   if (user) {
     req.user = user;
-    next();
-  } else {
-    return Promise.reject( new MyError(404, 'No se encontró el usuario'));
   }
+  next();
 };
 
 mw.isOwnerOrAdmin = async (req, res, next) =>{
