@@ -27,7 +27,6 @@ function App() {
         <Route path="/recovery-password" component={AccountPassword} />
         <Route path="/project" component={ProjectView} />
         <Route path="/create-project" component={CreateProject} />
-        <Route path="/" component={Test} />
       </Switch>
     </Router>
   );
