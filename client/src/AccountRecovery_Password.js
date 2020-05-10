@@ -1,12 +1,12 @@
-import Button from "react-bootstrap/Button";
+import axios from "axios";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
+import Error from "./Error";
 import React, { useState, useEffect } from "react";
+import RecoveryForm from "./RecoveryForm";
 import Row from "react-bootstrap/Row";
 import { URI } from "./config";
-import axios from "axios";
 
 function checkInputs(password, confirmation) {
   if (password !== "" && confirmation !== "" && password === confirmation) {
@@ -26,16 +26,16 @@ const AccountRecovery_Password = ({ history, match, location }) => {
   let parsed = queryString.parse(location.search);
   let { email, token } = parsed;
 
-  const _handleClick = e => {
+  const _handleClick = (e) => {
     e.preventDefault();
 
     if (checkInputs(password, confirmation)) {
       return axios
         .post(URI + "/api/password", { email, token, password })
-        .then(response => {
+        .then((response) => {
           history.push("/login");
         })
-        .catch(error => {
+        .catch((error) => {
           if (error.response) {
             setCertificate(false);
             return setError(error.response.data.message);
@@ -51,10 +51,10 @@ const AccountRecovery_Password = ({ history, match, location }) => {
     const fetchData = async () => {
       axios
         .get(`${URI}/api/verify?token=${token}&email=${email}`)
-        .then(response => {
+        .then((response) => {
           return setCertificate(true);
         })
-        .catch(error => {
+        .catch((error) => {
           if (error.response) {
             return setError(error.response.data.message);
           } else return setError(error.message);
@@ -64,48 +64,22 @@ const AccountRecovery_Password = ({ history, match, location }) => {
     fetchData();
   }, [email, token]);
 
-  const _handleKeyDown = e => {
+  const _handleKeyDown = (e) => {
     if (e.key === "Enter") {
       _handleClick(e);
     }
   };
 
   const recoveryForm = (
-    <Form className="mb-2">
-      <h1 className="display-4">Reset password</h1>
-      <Form.Group controlId="formBasicPassword">
-        <Form.Control
-          className="mb-2"
-          type="password"
-          placeholder="New password"
-          onChange={e => {
-            setPassword(e.target.value);
-          }}
-        />
-      </Form.Group>
-      <Form.Group controlId="formBasicPasswordConfirmation">
-        <Form.Control
-          className="mb-2"
-          type="password"
-          placeholder="Confirm password"
-          onChange={e => {
-            setConfirmation(e.target.value);
-          }}
-          onKeyDown={_handleKeyDown}
-        />
-      </Form.Group>
-      <Button variant="main" size="lg" block onClick={_handleClick}>
-        Log in
-      </Button>
-    </Form>
+    <RecoveryForm
+      _handleClick={_handleClick}
+      _handleKeyDown={_handleKeyDown}
+      setPassword={setPassword}
+      setConfirmation={setConfirmation}
+    />
   );
 
-  const errorMessage = (
-    <div>
-      <h1 className="display-4">Error</h1>
-      <p> {error} </p>
-    </div>
-  );
+  const errorMessage = <Error error={error} />;
 
   return (
     <Container fluid>

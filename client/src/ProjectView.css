@@ -1,0 +1,22 @@
+
+.project-image {
+    width: 100%;
+}
+
+.project-image img {
+    max-height:100%;
+    max-width: 100%;
+  }
+
+.project-general {
+    text-align: center;
+}
+
+.project-info {     
+    margin-bottom: 15%;  
+}
+
+.project-description div, .account-info div {
+    margin: 10px 0px;
+    padding: 5px;
+}
