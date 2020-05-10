@@ -6,7 +6,6 @@ import Login from './Login';
 import ProjectView from './ProjectView';
 import React, { useState } from "react";
 import Signup from './Signup';
-import Test from './Test';
 import Themer from './ThemeSetter';
 import TopNavbar from './TopNavbar';
 import { getToken } from './TokenUtilities';
