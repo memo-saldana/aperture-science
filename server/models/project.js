@@ -8,7 +8,8 @@ const projectSchema = new mongoose.Schema({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    rel: 'User',
+    ref: 'User',
+    required: [true, "Owner not received"]
   },
   subtitle: {
     type: String
@@ -65,6 +66,8 @@ projectSchema.statics.getAll = async function(page, pageSize, category) {
            .exec(),
     this.countDocuments(query)
   ])
+
+  console.log('projects :>> ', projects);
 
   return {projects, page, totalPages: Math.ceil(count/pageSize)}
 }
