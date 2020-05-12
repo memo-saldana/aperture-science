@@ -8,7 +8,8 @@ const projectSchema = new mongoose.Schema({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    rel: 'User',
+    ref: 'User',
+    required: [true, "Owner not received"]
   },
   subtitle: {
     type: String
@@ -51,7 +52,8 @@ projectSchema.statics.getAll = async function(page, pageSize, category) {
   pageSize = parseInt(pageSize) || 10;
 
   pageSize = pageSize > 0 ? pageSize : 10; 
-  page = page > 0 ? page - 1: 0;
+  page = page > 1 ? page: 1;
+  const currentPage = page - 1;
   
   if(category && category.length > 0) {
     query.category = category
@@ -59,12 +61,14 @@ projectSchema.statics.getAll = async function(page, pageSize, category) {
 
   const [projects, count] = await Promise.all([
     this.find(query)
-           .skip(page * pageSize)
+           .skip(currentPage * pageSize)
            .limit(pageSize)
            .populate('owner')
            .exec(),
     this.countDocuments(query)
   ])
+
+  console.log('projects :>> ', projects);
 
   return {projects, page, totalPages: Math.ceil(count/pageSize)}
 }
