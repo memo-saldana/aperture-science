@@ -126,7 +126,6 @@ const CreateProject = ({ history }) => {
   };
 
   const _postHandler = (_) => {
-    console.log(checkInputs(state, startDate, endDate, categories));
     if (
       checkInputs(state, startDate, endDate, categories) &&
       state.dateError === ""
@@ -165,10 +164,8 @@ const CreateProject = ({ history }) => {
     e.preventDefault();
     let respError = await _postHandler();
     if (respError) {
-      console.log(respError);
       return respError;
     } else {
-      console.log("should push to history");
       history.push("/");
     }
   };
