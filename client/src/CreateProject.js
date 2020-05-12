@@ -126,7 +126,6 @@ const CreateProject = ({ history }) => {
   };
 
   const _postHandler = (_) => {
-    console.log(checkInputs(state, startDate, endDate, categories));
     if (
       checkInputs(state, startDate, endDate, categories) &&
       state.dateError === ""

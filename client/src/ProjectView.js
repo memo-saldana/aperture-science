@@ -20,8 +20,8 @@ const initialState = {
   picture: "",
   daysLeft: "",
   goal: "",
-  userName: ""
-}
+  userName: "",
+};
 
 function reducer(state, { field, value }) {
   return {
@@ -30,39 +30,53 @@ function reducer(state, { field, value }) {
   };
 }
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2
+const formatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
 });
 
-const ProjectView = () => {
-
+const ProjectView = ({ location }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  useEffect( () => {
+  const queryString = require("query-string");
+  let parsed = queryString.parse(location.search);
+  let { owner, projectId } = parsed;
+
+  useEffect(() => {
     const fetchData = async () => {
-      let { data } = await axios( `${URI}/api/users/5e8418459aa81700177d5e33/projects/5eb1b968b365fa0017baec74`);
+      let { data } = await axios(`${URI}/api/projects/${projectId}`);
 
       data = data["project"];
-      const {title, subtitle, picture, goal, description, campaignStart, campaignEnd} = data;
+      const {
+        title,
+        subtitle,
+        picture,
+        goal,
+        description,
+        campaignStart,
+        campaignEnd,
+        owner
+      } = data;
 
       const oneDay = 24 * 60 * 60 * 1000;
-      const daysLeft = Math.round(Math.abs((dateParser(campaignStart) - dateParser(campaignEnd)) / oneDay ))
-      
+      const daysLeft = Math.round(
+        Math.abs((dateParser(campaignStart) - dateParser(campaignEnd)) / oneDay)
+      );
+
       const descriptionParaph = description.split("\n");
-      
+
       dispatch({ field: "title", value: title });
       dispatch({ field: "subtitle", value: subtitle });
       dispatch({ field: "picture", value: picture });
       dispatch({ field: "description", value: descriptionParaph });
       dispatch({ field: "daysLeft", value: daysLeft });
       dispatch({ field: "goal", value: formatter.format(goal) });
-    }
+      dispatch({ field: "userName", value: owner.name });
+    };
 
     fetchData();
-  }, []);
-
+  }, [owner, projectId]);
 
   return (
     <Container fluid>
@@ -83,16 +97,20 @@ const ProjectView = () => {
                     </Col>
                     <Col md={5} className="align-bottom">
                       <h1>{state.title}</h1>
-                      <h6>
-                        {state.subtitle}
-                      </h6>
+                      <h6>{state.subtitle}</h6>
                       <div>
                         <span>
-                        <ProgressBar now={18} className="mt-5" />
-                        <p>Goal: <b>{state.goal}</b></p>
+                          <ProgressBar now={18} className="mt-5" />
+                          <p>
+                            Goal: <b>{state.goal}</b>
+                          </p>
                         </span>
                         <h3 className="card-title">Progress: 18%</h3>
-                        <h5 className="card-text mb-5">{state.daysLeft > 1 ? state.daysLeft + " days left!" : state.daysLeft + " day left!"}</h5>
+                        <h5 className="card-text mb-5">
+                          {state.daysLeft > 1
+                            ? state.daysLeft + " days left!"
+                            : state.daysLeft + " day left!"}
+                        </h5>
                       </div>
                       <Button block variant="main mt-auto">
                         Back this project now!
@@ -107,9 +125,7 @@ const ProjectView = () => {
             <Col xs={12} md={9} className="project-description">
               <Card>
                 <Card.Body className="card-text">
-                  <div>
-                    {state.description}
-                  </div>
+                  <div>{state.description}</div>
                 </Card.Body>
               </Card>
             </Col>
@@ -120,7 +136,7 @@ const ProjectView = () => {
                     className="account-image rounded-circle mx-auto d-block mb-3"
                     src="https://cdn2.f-cdn.com/contestentries/1316431/24595406/5ae8a3f2e4e98_thumb900.jpg"
                   />
-                  <h3 className="text-center card-title">Account Name</h3>
+                  <h3 className="text-center card-title">{state.userName}</h3>
                   <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
                     vitae ex at ante vulputate dignissim a imperdiet orci. Etiam

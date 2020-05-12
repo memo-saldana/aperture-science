@@ -30,7 +30,6 @@ function AccountRecovery_Email(props) {
   const _handleKeyDown = e => {
     if (e.key === "Enter") {
       _forgotHandler(e);
-      console.log("sending it");
     }
   };
 
