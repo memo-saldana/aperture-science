@@ -24,13 +24,16 @@ let userSchema = new mongoose.Schema({
     },
   },
   password: {
+    select: false,
     type: String,
     required: [true, "Password is missing"],
   },
-  tokens: [{
-    type: String,
-    select: false,
-  }],
+  tokens: {
+    type: [{
+      type: String,
+    }],
+  select: false,
+},
   resetPasswordToken: {
     type: String,
     select: false
