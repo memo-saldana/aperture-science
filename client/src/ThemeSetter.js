@@ -122,6 +122,11 @@ function ThemeSetter() {
           min-height: 314px;
           max-height: 100%;
         }
+
+        .page-item.active .page-link {
+          background-color: var(--main-color);
+          border-color: var(--main-color);
+        }
       `}
     </style>
   );

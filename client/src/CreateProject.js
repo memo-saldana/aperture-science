@@ -165,8 +165,10 @@ const CreateProject = ({ history }) => {
     e.preventDefault();
     let respError = await _postHandler();
     if (respError) {
+      console.log(respError);
       return respError;
     } else {
+      console.log("should push to history");
       history.push("/");
     }
   };
