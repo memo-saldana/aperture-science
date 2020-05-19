@@ -38,6 +38,7 @@ mw.checkLogin = async (req, res, next) =>{
   }
 
   if (user) {
+    delete user.tokens;
     req.user = user;
   }
   next();
