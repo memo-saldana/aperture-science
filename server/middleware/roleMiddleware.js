@@ -9,7 +9,7 @@ mw.isAdmin = async (req, res, next) =>{
     return Promise.reject(new MyError(401, 'Log in required'));
   }
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
-  const user = await User.findById(data._id).select('+role +bActive').exec();
+  const user = await User.findById(data._id).select('+role +tokens +bActive').exec();
   if (user && !user.tokens.includes(token.split(' ')[1])) {
     return Promise.reject(new MyError(405,
         'Session has expired, login again.'));
@@ -31,7 +31,7 @@ mw.checkLogin = async (req, res, next) =>{
     return next();
   }
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
-  const user = await User.findById(data._id).select('+role +bActive').exec();
+  const user = await User.findById(data._id).select('+role +tokens +bActive').exec();
   if (user && !user.tokens.includes(token.split(' ')[1])) {
     return Promise.reject(new MyError(405,
         'Session has expired, login again.'));
@@ -49,7 +49,7 @@ mw.isLoggedIn = async (req, res, next) => {
     return next();
   }
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
-  const user = await User.findById(data._id).select('+role +bActive').exec();
+  const user = await User.findById(data._id).select('+role +tokens +bActive').exec();
   if (user && !user.tokens.includes(token.split(' ')[1])) {
     return Promise.reject(new MyError(405,
         'Session has expired, login again.'));
@@ -70,7 +70,7 @@ mw.isOwnerOrAdmin = async (req, res, next) =>{
   }
 
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
-  const user = await User.findById(data._id).select('+role').exec();
+  const user = await User.findById(data._id).select('+role +tokens').exec();
   
   if (user && !user.tokens.includes(token.split(' ')[1])) {
     return Promise.reject(new MyError(405,
