@@ -127,6 +127,10 @@ function ThemeSetter() {
           background-color: var(--main-color);
           border-color: var(--main-color);
         }
+
+        .page-link {
+          color: var(--main-color);
+        }
       `}
     </style>
   );
