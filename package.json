@@ -19,7 +19,5 @@
     "url": "https://github.com/memo-saldana/aperture-science/issues"
   },
   "homepage": "https://github.com/memo-saldana/aperture-science#readme",
-  "dependencies": {
-    "stripe": "^8.49.0"
-  }
+  "dependencies": {}
 }
