@@ -7,26 +7,26 @@ import Image from "react-bootstrap/Image";
 import React from "react";
 import Row from "react-bootstrap/Row";
 
-function MyProjectCard(props) {
+function MyProjectCard({image, title, description, category, completed, days}) {
   return (
     <Card className="m-4">
       <Row className="align-items-center p-3">
         <Col>
-          <Image rounded src={props.image} className="w-100"/>
+          <Image rounded src={image} className="w-100"/>
         </Col>
 
         <Col md={8} className="p-3">
-          <h2 className="card-title">{props.title}</h2>
-          <Card.Text>{props.description}</Card.Text>
-          <Badge variant="dark">{props.category}</Badge>
+          <h2 className="card-title">{title}</h2>
+          <Card.Text>{description}</Card.Text>
+          <Badge variant="dark">{category}</Badge>
         </Col>
 
         <Col>
           <Card.Text>
-            <b>{props.completed}% backed</b>
+            <b>{completed}% backed</b>
           </Card.Text>
           <Card.Text>
-            <b>{props.days} day(s) left</b>
+            <b>{days} day(s) left</b>
           </Card.Text>
           <Button variant="main" block>
             Edit
