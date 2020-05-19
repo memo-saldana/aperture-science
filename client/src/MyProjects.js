@@ -1,67 +1,93 @@
 import axios from "axios";
 import Container from "react-bootstrap/Container";
+import Col from "react-bootstrap/Col";
+import { dateParser } from "./CreateProject";
+import Loading from "./Loading";
 import MyProjectCard from "./MyProjectCard";
+import PageFooter from "./PageFooter";
 import React, { useEffect, useState } from "react";
+import Row from "react-bootstrap/Row";
+import { getUserId, getToken } from "./TokenUtilities";
+import { URI } from "./config.js";
 
-let dummyText =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
-let mockProjects = [
-  {
-    title: "First Project",
-    description: dummyText,
-    category: "Mathematics",
-    completed: 35,
-    days: 27,
-  },
-  {
-    title: "Second Project",
-    description: dummyText,
-    category: "Physics",
-    completed: 42,
-    days: 12,
-  },
-  {
-    title: "Third Project",
-    description: dummyText,
-    category: "Chemistry",
-    completed: 79,
-    days: 1,
-  },
-];
+const oneDay = 24 * 60 * 60 * 1000;
+const daysLeft = (campaignStart, campaignEnd) => {
+  return Math.round(
+    Math.abs((dateParser(campaignStart) - dateParser(campaignEnd)) / oneDay)
+  );
+};
+
+const processProject = (project) => {
+  let today = new Date();
+  today.setDate(today.getDate() - 1);
+
+  let left =
+    dateParser(project.campaignEnd) < today
+      ? 0
+      : daysLeft(project.campaignStart, project.campaignEnd);
+
+  return {
+    ...project,
+    daysLeft: left,
+  };
+};
 
 const MyProjects = () => {
-
-  const [projects, setProjects] = useState([{}]);
+  const [projects, setProjects] = useState(null);
+  const [current, setCurrent] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const { projectData } = await axios(
-        "https://jsonplaceholder.typicode.com/posts"
+      let { data } = await axios(
+        `${URI}/api/users/${getUserId()}/projects/?page=${current}`,
+        {
+          headers: {
+            Authorization: `Bearer: ${getToken()}`,
+          },
+        }
       );
 
-      setProjects(projectData);
+      let { projects, totalPages, page } = data;
+      projects = projects.map((project) => processProject(project));
+
+      setProjects(projects);
+      setCurrent(page);
+      setTotalPages(totalPages);
     };
 
     fetchProjects();
-  }, []);
-
-  console.log(projects);
+  }, [current]);
 
   return (
     <Container fluid className="App">
-      <h1 className="display-4 pt-4 px-4">My Projects</h1>
-
-      {mockProjects.map((project, it) => (
-        <MyProjectCard
-          image={"https://unsplash.it/200"}
-          title={project.title}
-          description={project.description}
-          category={project.category}
-          completed={project.completed}
-          days={project.days}
-          key={it}
+      <Col>
+        <h1 className="display-4 pt-4 px-4">My Projects</h1>
+        {projects === null ? (
+          <Loading />
+        ) : (
+          projects.map((project, index) => {
+            return (
+              <MyProjectCard
+                key={index}
+                image={project.picture}
+                title={project.title}
+                description={project.subtitle}
+                category={project.category.name}
+                completed={index}
+                days={project.daysLeft}
+              />
+            );
+          })
+        )}
+      </Col>
+      <Row className="justify-content-center">
+        <PageFooter
+          current={current}
+          setCurrent={setCurrent}
+          numPages={totalPages}
         />
-      ))}
+      </Row>
     </Container>
   );
 };

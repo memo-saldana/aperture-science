@@ -12,7 +12,7 @@ function MyProjectCard(props) {
     <Card className="m-4">
       <Row className="align-items-center p-3">
         <Col>
-          <Image rounded src={props.image} />
+          <Image rounded src={props.image} className="w-100"/>
         </Col>
 
         <Col md={8} className="p-3">
@@ -22,9 +22,15 @@ function MyProjectCard(props) {
         </Col>
 
         <Col>
-          <Card.Text><b>{props.completed}% backed</b></Card.Text>
-          <Card.Text><b>{props.days} day(s) left</b></Card.Text>
-          <Button variant="main" block> Edit </Button>
+          <Card.Text>
+            <b>{props.completed}% backed</b>
+          </Card.Text>
+          <Card.Text>
+            <b>{props.days} day(s) left</b>
+          </Card.Text>
+          <Button variant="main" block>
+            Edit
+          </Button>
         </Col>
       </Row>
     </Card>
