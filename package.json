@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/memo-saldana/aperture-science#readme",
   "dependencies": {
+    "query-string": "^6.12.1",
     "stripe": "^8.49.0"
   }
 }

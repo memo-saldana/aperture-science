@@ -2,11 +2,13 @@ import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
 import React from 'react';
 
-const NavButtons = ({ loggedIn, _logout }) => {
-    
+const NavButtons = ({ userId,loggedIn, _logout }) => {
+    const accountLink = `/account/?accountId=${userId}`
+    console.log(accountLink)
     const loggedInButtons = (
         <Nav className="justify-content-end" style={{ width: "100%" }}>
             <Nav.Link href="/create-project">Create Project</Nav.Link>
+            <Nav.Link href={accountLink}>My Account</Nav.Link>
             <Button variant="outline-info" href="/" className="ml-3" onClick={_logout}>Log out</Button>
         </Nav>
     );

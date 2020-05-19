@@ -1,5 +1,6 @@
 import AccountEmail from './AccountRecovery_Email';
 import AccountPassword from './AccountRecovery_Password';
+import Account from './Account';
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import CreateProject from './CreateProject';
 import Login from './Login';
@@ -28,6 +29,7 @@ function App() {
         <Route path="/recovery-password" component={AccountPassword} />
         <Route path="/project" component={ProjectView} />
         <Route path="/create-project" component={CreateProject} />
+        <Route path="/account" component={Account} />
         <Route path="/*" component={Home} />
       </Switch>
     </Router>

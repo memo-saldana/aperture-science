@@ -59,6 +59,8 @@ const ProjectView = ({ location }) => {
   let parsed = queryString.parse(location.search);
   let { owner, projectId } = parsed;
 
+  console.log(parsed);
+
   useEffect(() => {
     const fetchData = async () => {
       let { data } = await axios(`${URI}/api/projects/${projectId}`);
@@ -113,6 +115,7 @@ const ProjectView = ({ location }) => {
 
   const _checkout = async e => {
     e.preventDefault();
+    console.log(localStorage.userId)
     let response = await _checkoutHandler();
     console.log(response);
   };

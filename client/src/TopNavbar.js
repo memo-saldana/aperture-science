@@ -1,6 +1,6 @@
 import Navbar from 'react-bootstrap/Navbar';
 import NavButtons from './NavButtons';
-import { deleteToken, deleteUserId } from "./TokenUtilities";
+import { getUserId, deleteToken, deleteUserId } from "./TokenUtilities";
 import React from "react";
 
 const TopNavbar = ({ history, status }) => {
@@ -25,7 +25,7 @@ const TopNavbar = ({ history, status }) => {
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <NavButtons loggedIn={status} _logout={_logout} />
+                    <NavButtons userId={getUserId()} loggedIn={status} _logout={_logout} />
                 </Navbar.Collapse>
         </Navbar>
     );
