@@ -12,6 +12,10 @@ router.get('/projects/:projectId',
   aHandler( projectCtr.getOne() ),
 );
 
+router.get('/projects/:projectId/donate',
+  aHandler( projectCtr.getStripeID() ),
+);
+
 router.post('/users/:userId/projects',
   aHandler( isOwnerOrAdmin ),
   aHandler( projectCtr.create() ),

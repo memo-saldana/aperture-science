@@ -28,6 +28,11 @@ ctr.create = () => async (req, res, next) => {
   if (!user) {
     throw new MyError(400, 'Owner does not exist')
   }
+
+  if(!user.stripeId) {
+    throw new MyError(403, "Setup payment information first on your profile")
+  }
+
   const project = new Project({...projectData, owner: user});
 
   await project.save();
@@ -63,7 +68,7 @@ ctr.delete = () => async (req, res, next) => {
 }
 
 ctr.getForOneUser = () => async (req, res, next) => {
-  const {userId, projectId} = req.params;
+  const {userId} = req.params;
   
   let user = await User.findOne({_id: userId}).exec();
 
@@ -73,6 +78,17 @@ ctr.getForOneUser = () => async (req, res, next) => {
   const body = await Project.getAll(page, pageSize, category, user._id);
 
   return res.status(200).json(body); 
+}
+
+ctr.getStripeID = () => async (req, res, next) => {
+  const {projectId} = req.params;
+
+  const project = await Project.getOneById(projectId);
+
+  return project.owner.stripeId ? 
+    res.status(200).json({stripeId: project.owner.stripeId}) :
+    res.status(400).json({message: "The owner of the project has not setup payment information."})
+
 }
 
 module.exports = ctr;
