@@ -17,6 +17,11 @@ router.post('/users/:userId/projects',
   aHandler( projectCtr.create() ),
 );
 
+router.post('/users/:userId/projects',
+  aHandler( isOwnerOrAdmin ),
+  aHandler( projectCtr.getForOneUser() ),
+);
+
 router.put('/users/:userId/projects/:projectId',
   aHandler( isOwnerOrAdmin ),
   aHandler( projectCtr.update() ),

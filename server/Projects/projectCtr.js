@@ -6,7 +6,7 @@ const Project = require('../models/project'),
 ctr.getAll = () => async (req, res, next) => {
   const {page, pageSize, category} = req.query;
 
-  const body = await Project.getAll(page, pageSize, category);
+  const body = await Project.getAll(page, pageSize, category, null);
 
   return res.status(200).json(body);
 }
@@ -60,6 +60,19 @@ ctr.delete = () => async (req, res, next) => {
   const project = await Project.deactivate(projectId, user._id);
 
   return res.status(200).json({project});
+}
+
+ctr.getForOneUser = () => async (req, res, next) => {
+  const {userId, projectId} = req.params;
+  
+  let user = await User.findOne({_id: userId}).exec();
+
+  if (!user) {
+    throw new MyError(400, 'Owner does not exist')
+  }
+  const body = await Project.getAll(page, pageSize, category, user._id);
+
+  return res.status(200).json(body); 
 }
 
 module.exports = ctr;

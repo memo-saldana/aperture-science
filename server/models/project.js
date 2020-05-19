@@ -46,7 +46,7 @@ const projectSchema = new mongoose.Schema({
   timestamps: true,
 })
 
-projectSchema.statics.getAll = async function(page, pageSize, category) {
+projectSchema.statics.getAll = async function(page, pageSize, category, userId) {
   const query = {bActive: true}
   page = parseInt(page) || 1;
   pageSize = parseInt(pageSize) || 10;
@@ -58,6 +58,11 @@ projectSchema.statics.getAll = async function(page, pageSize, category) {
   if(category && category.length > 0) {
     query.category = category
   }
+  
+  if(userId && userId.length > 0) {
+    query.owner = userId
+  }
+  
 
   const [projects, count] = await Promise.all([
     this.find(query)
