@@ -78,7 +78,7 @@ mw.isOwnerOrAdmin = async (req, res, next) =>{
         'Session has expired, login again.'));
   }
   if (user && (user._id == req.params.userId || user.role == "admin")) {
-    next();
+    return next();
   } else if (user) {
     return Promise.reject( new MyError(403,
         'You don\'t have permission to do that.'));

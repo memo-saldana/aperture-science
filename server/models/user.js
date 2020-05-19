@@ -144,10 +144,10 @@ userSchema.methods.generateToken = async function() {
 userSchema.methods.generateState = async function() {
   const buffer = crypto.randomBytes(4);
   const token = buffer.toString('hex');
-  user.state = token;
+  this.state = token;
   //Valid for 1 hour
-  user.stateExpires = Date.now() + 3600000;
-  await user.save();
+  this.stateExpires = Date.now() + 3600000;
+  await this.save();
   return token;
 }
 
