@@ -7,6 +7,7 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Image from "react-bootstrap/Image";
 import React, { useEffect, useReducer } from "react";
+import { getToken } from "./TokenUtilities";
 import Row from "react-bootstrap/Row";
 import { URI } from "./config";
 
@@ -14,6 +15,7 @@ const initialState = {
   name: "",
   about: "El chocomilk está RIQUIIIIIIISMO",
   nameError: "",
+  userState: "",
 };
 
 function reducer(state, { field, value }) {
@@ -25,6 +27,8 @@ function reducer(state, { field, value }) {
 
 const Account = ({ location }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const OAuthLink = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id=' + 'ca_H8sVQtZQ9URkeJKBgInu8Dck8gVKXcj7' + '&scope=read_write&state=' + state.userState;
 
   const onChange = (e) => {
     const name = e.target.name;
@@ -41,13 +45,14 @@ const Account = ({ location }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      let { data } = await axios(`${URI}/api/users/${accountId}`);
-      
+      let { data } = await axios(`${URI}/api/users/${accountId}`, {headers: {Authorization: `Bearer ${getToken()}`}});
       data = data["user"];
-      console.log(data);
       const { name } = data;
-
       dispatch({field: "name", value: name});
+
+      let state = await axios(`${URI}/api/users/${accountId}/state`, {headers: {Authorization: `Bearer ${getToken()}`}});
+      state = state.data.state
+      dispatch({field: "userState", value: state})
     };
     fetchData();
   }, [owner, accountId]);
@@ -108,7 +113,7 @@ const Account = ({ location }) => {
               </Row>
               <h2>Payment info</h2>
               {/* will change for stripe button */}
-              <Button variant="primary">Connect with Stripe</Button>
+              <Button href={OAuthLink} variant="primary">Connect with Stripe</Button>
               <Button variant="main" onClick={onClick}>
                 Save
               </Button>
