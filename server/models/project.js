@@ -68,7 +68,7 @@ projectSchema.statics.getAll = async function(page, pageSize, category, userId) 
     this.find(query)
            .skip(currentPage * pageSize)
            .limit(pageSize)
-           .populate('owner')
+           .populate('owner category')
            .exec(),
     this.countDocuments(query)
   ])
