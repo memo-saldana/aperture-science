@@ -70,7 +70,8 @@ ctr.delete = () => async (req, res, next) => {
 
 ctr.getForOneUser = () => async (req, res, next) => {
   const {userId} = req.params;
-  
+  const {page, pageSize, category} = req.query;
+
   let user = await User.findOne({_id: userId}).exec();
 
   if (!user) {
