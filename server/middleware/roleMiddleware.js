@@ -6,22 +6,22 @@ const mw = {};
 mw.isAdmin = async (req, res, next) =>{
   const token = req.headers['authorization'];
   if (!token) {
-    return Promise.reject(new MyError(401, 'Inicie sesión'));
+    return Promise.reject(new MyError(401, 'Log in required'));
   }
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
   const user = await User.findById(data._id).select('+role +bActive').exec();
   if (user && !user.tokens.includes(token.split(' ')[1])) {
     return Promise.reject(new MyError(405,
-        'La sesión ha expirado, favor de iniciar sesión nuevamente'));
+        'Session has expired, login again.'));
   }
 
   if (user && user.role == "admin") {
     next();
   } else if (user) {
     return Promise.reject( new MyError(403,
-        'No tienes permiso para hacer eso'));
+        'You don\'t have permission to do that.'));
   } else {
-    return Promise.reject( new MyError(404, 'No se encontró el usuario'));
+    return Promise.reject( new MyError(404, 'User not found.'));
   }
 };
 
@@ -34,7 +34,7 @@ mw.checkLogin = async (req, res, next) =>{
   const user = await User.findById(data._id).select('+role +bActive').exec();
   if (user && !user.tokens.includes(token.split(' ')[1])) {
     return Promise.reject(new MyError(405,
-        'La sesión ha expirado, favor de iniciar sesión nuevamente'));
+        'Session has expired, login again.'));
   }
 
   if (user) {
@@ -43,10 +43,30 @@ mw.checkLogin = async (req, res, next) =>{
   next();
 };
 
+mw.isLoggedIn = async (req, res, next) => {
+  const token = req.headers['authorization'];
+  if (!token) {
+    return next();
+  }
+  const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
+  const user = await User.findById(data._id).select('+role +bActive').exec();
+  if (user && !user.tokens.includes(token.split(' ')[1])) {
+    return Promise.reject(new MyError(405,
+        'Session has expired, login again.'));
+  }
+
+  if (user) {
+    req.user = user;
+    next();
+  } else {
+    return Promise.reject(new MyError(401, 'Log in required.'));
+  }
+}
+
 mw.isOwnerOrAdmin = async (req, res, next) =>{
   const token = req.headers['authorization'];
   if (!token) {
-    return Promise.reject(new MyError(401, 'Inicie sesión'));
+    return Promise.reject(new MyError(401, 'Log in required.'));
   }
 
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
@@ -54,16 +74,16 @@ mw.isOwnerOrAdmin = async (req, res, next) =>{
   
   if (user && !user.tokens.includes(token.split(' ')[1])) {
     return Promise.reject(new MyError(405,
-        'La sesión ha expirado, favor de iniciar sesión nuevamente'));
+        'Session has expired, login again.'));
   }
   if (user && (user._id == req.params.userId || user.role == "admin")) {
     next();
   } else if (user) {
     return Promise.reject( new MyError(403,
-        'No tienes permiso para hacer eso'));
+        'You don\'t have permission to do that.'));
   } else {
     return Promise.reject( new MyError(404,
-        'No se encontró el usuario'));
+        'User not found.'));
   }
 };
 
