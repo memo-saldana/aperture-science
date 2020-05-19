@@ -10,6 +10,8 @@ import Jumbotron from "react-bootstrap/Jumbotron";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import React, { useEffect, useReducer } from "react";
 import Row from "react-bootstrap/Row";
+import InputGroup from 'react-bootstrap/InputGroup'
+import FormControl from 'react-bootstrap/FormControl'
 import { URI } from "./config";
 
 const initialState = {
@@ -21,7 +23,17 @@ const initialState = {
   daysLeft: "",
   goal: "",
   userName: "",
+  amount: 0.0
 };
+
+function checkInputs(state) {
+  if (
+    state.amount !== "" && !isNaN(state.amount)
+  ) {
+    return true;
+  }
+  return false;
+}
 
 function reducer(state, { field, value }) {
   return {
@@ -38,6 +50,10 @@ const formatter = new Intl.NumberFormat("en-US", {
 
 const ProjectView = ({ location }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const onChange = e => {
+    dispatch({ field: e.target.name, value: e.target.value });
+  };
 
   const queryString = require("query-string");
   let parsed = queryString.parse(location.search);
@@ -78,6 +94,35 @@ const ProjectView = ({ location }) => {
     fetchData();
   }, [owner, projectId]);
 
+  const _checkoutHandler = _ => {
+    if (checkInputs(state)) {
+      let {amount} = state;
+      console.log(URI + `/api/projects/${projectId}/donate`)
+      return axios
+        .get(URI + `/api/projects/${projectId}/donate`)
+        .then(response => {
+          return response;
+        })
+        .catch(error => {
+          if (error.response) {
+            return error.response.data.message;
+          } else return error.message;
+        });
+    }
+  };
+
+  const _checkout = async e => {
+    e.preventDefault();
+    let response = await _checkoutHandler();
+    console.log(response);
+  };
+
+  const _handleKeyDown = e => {
+    if (e.key === "Enter") {
+      _checkout(e);
+    }
+  };
+
   return (
     <Container fluid>
       <Row id="App-Container" className="justify-content-center">
@@ -112,7 +157,23 @@ const ProjectView = ({ location }) => {
                             : state.daysLeft + " day left!"}
                         </h5>
                       </div>
-                      <Button block variant="main mt-auto">
+                      <InputGroup className="mb-3 amountBox">
+                        <InputGroup.Prepend>
+                          <InputGroup.Text>$</InputGroup.Text>
+                        </InputGroup.Prepend>
+                        <FormControl 
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          onChange={onChange}
+                          onKeyDown={_handleKeyDown}
+                          name="amount"
+                          aria-label="Amount (to the nearest dollar)" />
+                      </InputGroup>
+                      <p className="comissionText">5% will be discounted as commission</p>
+                      <Button 
+                        onClick={_checkout}
+                        block variant="main mt-auto">
                         Back this project now!
                       </Button>
                     </Col>
