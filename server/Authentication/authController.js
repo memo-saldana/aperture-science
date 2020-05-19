@@ -16,7 +16,7 @@ ctr.signup = () => async (req,res,next) => {
 
 ctr.login = () => async (req,res,next) => {
   const {email, password} = req.body;
-  let user = await User.findOne({email}).exec();
+  let user = await User.findOne({email}).populate('+password').exec();
   if(!user) return Promise.reject(new MyError(401, "Email or password incorrect, try again."));
 
   let matches = await user.comparePassword(password);
