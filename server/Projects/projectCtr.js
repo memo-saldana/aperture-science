@@ -1,6 +1,7 @@
 const Project = require('../models/project'),
       User = require('../models/user'),
       MyError = require('../middleware/MyError'),
+      stripe = require('../services/stripe'),
       ctr = {};
 
 ctr.getAll = () => async (req, res, next) => {
@@ -83,10 +84,11 @@ ctr.getForOneUser = () => async (req, res, next) => {
 ctr.getStripeID = () => async (req, res, next) => {
   const {projectId} = req.params;
 
+  const customerId = await stripe.getCustomerId(req.user);
   const project = await Project.getOneById(projectId);
 
   return project.owner.stripeId ? 
-    res.status(200).json({stripeId: project.owner.stripeId}) :
+    res.status(200).json({stripeId: project.owner.stripeId, customerId}) :
     res.status(400).json({message: "The owner of the project has not setup payment information."})
 
 }

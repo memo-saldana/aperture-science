@@ -13,7 +13,7 @@ router.get('/stripe',
   aHandler( paymentCtr.linkStripe() )
 );
 
-router.post('projects/:projectId/users/:userId/pay',
+router.post('/donate',
   aHandler( isOwnerOrAdmin ),
   aHandler( paymentCtr.payProject() ),
 );
