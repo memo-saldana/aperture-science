@@ -68,7 +68,7 @@ projectSchema.statics.getAll = async function(page, pageSize, category) {
     this.countDocuments(query)
   ])
 
-  console.log('projects :>> ', projects);
+  // console.log('projects :>> ', projects);
 
   return {projects, page, totalPages: Math.ceil(count/pageSize)}
 }
