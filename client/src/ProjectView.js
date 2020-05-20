@@ -9,8 +9,12 @@ import Image from "react-bootstrap/Image";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import React, { useEffect, useReducer } from "react";
+import { getToken, getUserId } from "./TokenUtilities";
 import Row from "react-bootstrap/Row";
+import InputGroup from 'react-bootstrap/InputGroup'
+import FormControl from 'react-bootstrap/FormControl'
 import { URI } from "./config";
+import { loadStripe } from "@stripe/stripe-js";
 
 const initialState = {
   title: "",
@@ -21,7 +25,19 @@ const initialState = {
   daysLeft: "",
   goal: "",
   userName: "",
+  amount: 0.0
 };
+
+const stripePromise = loadStripe('pk_test_bdfSjCaZaFmllllTsgqBBLYn00pzIjcm72');
+
+function checkInputs(state) {
+  if (
+    state.amount !== "" && !isNaN(state.amount)
+  ) {
+    return true;
+  }
+  return false;
+}
 
 function reducer(state, { field, value }) {
   return {
@@ -38,6 +54,10 @@ const formatter = new Intl.NumberFormat("en-US", {
 
 const ProjectView = ({ location }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const onChange = e => {
+    dispatch({ field: e.target.name, value: e.target.value });
+  };
 
   const queryString = require("query-string");
   let parsed = queryString.parse(location.search);
@@ -78,6 +98,41 @@ const ProjectView = ({ location }) => {
     fetchData();
   }, [owner, projectId]);
 
+  const _checkoutHandler = _ => {
+    if (checkInputs(state)) {
+      localStorage.setItem("lastDonatedProject", projectId);
+
+      let { amount } = state;
+      amount = amount * 100;
+      return axios
+        .post(URI + `/api/projects/${projectId}/users/${getUserId()}`, { amount }, { headers: { Authorization: `Bearer ${getToken()}` } })
+        .then(response => {
+          return response;
+        })
+        .catch(error => {
+          if (error.response) {
+            return error.response.data.message;
+          } else return error.message;
+        });
+    }
+  };
+
+  const _checkout = async e => {
+    e.preventDefault();
+    let data = await _checkoutHandler();
+    const sessionId = data.data.sessionId;
+    const stripe = await stripePromise;
+    const { error } = await stripe.redirectToCheckout({
+      sessionId,
+    });
+  };
+
+  const _handleKeyDown = e => {
+    if (e.key === "Enter") {
+      _checkout(e);
+    }
+  };
+
   return (
     <Container fluid>
       <Row id="App-Container" className="justify-content-center">
@@ -112,7 +167,23 @@ const ProjectView = ({ location }) => {
                             : state.daysLeft + " day left!"}
                         </h5>
                       </div>
-                      <Button block variant="main mt-auto">
+                      <InputGroup className="mb-3 amountBox">
+                        <InputGroup.Prepend>
+                          <InputGroup.Text>$</InputGroup.Text>
+                        </InputGroup.Prepend>
+                        <FormControl
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          onChange={onChange}
+                          onKeyDown={_handleKeyDown}
+                          name="amount"
+                          aria-label="Amount (to the nearest dollar)" />
+                      </InputGroup>
+                      <p className="comissionText">5% will be discounted as commission</p>
+                      <Button
+                        onClick={_checkout}
+                        block variant="main mt-auto">
                         Back this project now!
                       </Button>
                     </Col>
