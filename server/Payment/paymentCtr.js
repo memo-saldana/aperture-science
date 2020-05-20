@@ -1,5 +1,6 @@
 
 const User = require('../models/user'),
+      Project = require('../models/project'),
       MyError = require('../middleware/MyError'),
       stripe = require('../services/stripe'),
       ctr = {};
@@ -39,6 +40,25 @@ ctr.payProject = () => async (req, res, next) => {
       
   }
   return res.status(200).json({message:'Payment successfull'});
+}
+
+ctr.createSession = () => async (req, res, next) => {
+  const {projectId, userId} = req.params;
+  
+  const user = userId == req.user._id.toString() ? 
+    req.user :
+    await User.findOne({_id: userId}).exec();
+
+  const project = await Project.findOne({
+    _id: projectId,
+    bActive: true,
+  }).populate('owner', '+stripeId').exec()
+
+  if(!project) throw new MyError(404, "Project not found.");
+
+  const session = await stripe.createSession(user, project, amount);
+
+  return res.status(200).json({session});
 }
 
 module.exports = ctr;

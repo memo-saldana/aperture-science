@@ -37,11 +37,11 @@ serv.validateWebhook = req => {
   });
 }
 
-serv.getCustomerId = (user) => {
+serv.getCustomer = (user) => {
   return new Promise((resolve, reject) => {
     stripe.customers.retrieve( user._id.toString() )
         .then( (customer) => {
-          return resolve(customer);
+          return resolve(customer.id);
         })
         .catch( (error) => {
           console.log('error : ', error);
@@ -65,5 +65,32 @@ serv.getCustomerId = (user) => {
         });
   });
 };
+
+serv.createSession = (user, project, amount) => {
+  return new Promise((resolve, reject) => {
+    serv.getCustomer(user)
+    .then(customer => {
+      return stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [{
+          name: "Donation for " + project.name + " on Opening Science.",
+          amount: amount,
+          currency: 'mxn',
+          quantity: 1
+        }],
+        payment_intent_data: {
+          application_fee_amount: parseInt(amount*.05) > 100? parseInt(amount*.05) : 100,
+          transfer_data: {
+            destination: project.owner.stripeId
+          },
+        },
+        success_url: process.env.BASE_URL + '/success',
+        cancel_url: process.env.BASE_URL + '/failue'
+      });
+    })
+    .then(session => resolve(session))
+    .catch(err => reject(err))
+  });
+}
 
 module.exports = serv;

@@ -85,7 +85,7 @@ ctr.getForOneUser = () => async (req, res, next) => {
 ctr.getStripeID = () => async (req, res, next) => {
   const {projectId} = req.params;
 
-  const customerId = await stripe.getCustomerId(req.user);
+  const customerId = await stripe.getCustomer(req.user);
   const project = await Project.getOneById(projectId);
 
   return project.owner.stripeId ? 
