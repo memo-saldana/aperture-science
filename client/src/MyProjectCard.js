@@ -3,11 +3,20 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Image from "react-bootstrap/Image";
-
 import React from "react";
 import Row from "react-bootstrap/Row";
+import { useHistory } from "react-router-dom";
+import { getUserId } from "./TokenUtilities";
 
-function MyProjectCard({image, title, description, category, completed, days}) {
+function MyProjectCard({_id, image, title, description, category, completed, days}) {
+
+  let history = useHistory();
+
+  const goToProject = e => {
+    const { value } = e.target;
+    history.push(`/edit-project/?owner=${getUserId()}&&projectId=${value}`)
+  }
+
   return (
     <Card className="m-4">
       <Row className="align-items-center p-3">
@@ -28,7 +37,7 @@ function MyProjectCard({image, title, description, category, completed, days}) {
           <Card.Text>
             <b>{days} day(s) left</b>
           </Card.Text>
-          <Button variant="main" block>
+          <Button variant="main" block value={_id} onClick={goToProject}>
             Edit
           </Button>
         </Col>

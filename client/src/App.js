@@ -2,6 +2,7 @@ import AccountEmail from './AccountRecovery_Email';
 import AccountPassword from './AccountRecovery_Password';
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import CreateProject from './CreateProject';
+import EditProject from './EditProject';
 import Home from './Main';
 import Login from './Login';
 import MyProjects from './MyProjects';
@@ -30,6 +31,7 @@ function App() {
         <Route path="/project" component={ProjectView} />
         <Route path="/create-project" component={CreateProject} />
         <Route path="/my-projects" component={MyProjects}/>
+        <Route path="/edit-project" component={EditProject}/>
         <Route path="/*" component={Home} />
       </Switch>
     </Router>
