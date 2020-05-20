@@ -49,7 +49,7 @@ ctr.createSession = () => async (req, res, next) => {
   try {
     amount = parseInt(amount)
     if (isNaN(amount)) throw Error('NaN')
-    if ( amount < 1000) throw Error('Negative')
+    if (amount < 1000) throw Error('Negative')
   } catch(e) {
     console.log('e :>> ', e);
     throw new MyError(400, "You must donate at least $10.00 MXN.")

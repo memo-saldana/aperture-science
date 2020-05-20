@@ -30,6 +30,11 @@ mw.checkLogin = async (req, res, next) =>{
   if (!token) {
     return next();
   }
+  token = token.split(' ')[1];
+  if(!token || token.length > 0) {
+    next()
+  }
+  console.log('token :>> ', token);
   const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
   const user = await User.findById(data._id).select('+role +tokens +bActive').exec();
   if (user && !user.tokens.includes(token.split(' ')[1])) {
