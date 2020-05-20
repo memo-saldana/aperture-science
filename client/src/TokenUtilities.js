@@ -1,4 +1,3 @@
-
 export function getToken() {
     if (typeof(localStorage.token) !== "undefined") {
         return localStorage.token;
