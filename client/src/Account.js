@@ -7,15 +7,18 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Image from "react-bootstrap/Image";
 import React, { useEffect, useReducer } from "react";
-import { getToken } from "./TokenUtilities";
+import { getToken, getUserId } from "./TokenUtilities";
 import Row from "react-bootstrap/Row";
 import { URI } from "./config";
 
 const initialState = {
   name: "",
   about: "El chocomilk está RIQUIIIIIIISMO",
+  email: "",
+  stripeId: "",
   nameError: "",
   userState: "",
+  finishedFetch: false,
 };
 
 function reducer(state, { field, value }) {
@@ -39,20 +42,21 @@ const Account = ({ location }) => {
 
   const queryString = require("query-string");
   let parsed = queryString.parse(location.search);
-  let {owner, accountId } = parsed;
-
-  console.log(parsed);
+  let { owner, accountId } = parsed;
 
   useEffect(() => {
     const fetchData = async () => {
-      let { data } = await axios(`${URI}/api/users/${accountId}`, {headers: {Authorization: `Bearer ${getToken()}`}});
+      let { data } = await axios(`${URI}/api/users/${accountId}`, { headers: { Authorization: `Bearer ${getToken()}` } });
       data = data["user"];
-      const { name } = data;
-      dispatch({field: "name", value: name});
+      const { name, email, stripeId } = data;
+      dispatch({ field: "name", value: name });
+      dispatch({ field: "email", value: email });
+      dispatch({ field: "stripeId", value: stripeId });
 
-      let state = await axios(`${URI}/api/users/${accountId}/state`, {headers: {Authorization: `Bearer ${getToken()}`}});
+      let state = await axios(`${URI}/api/users/${accountId}/state`, { headers: { Authorization: `Bearer ${getToken()}` } });
       state = state.data.state
-      dispatch({field: "userState", value: state})
+      dispatch({ field: "userState", value: state })
+      dispatch({ field: "finishedFetch", value: true })
     };
     fetchData();
   }, [owner, accountId]);
@@ -65,7 +69,31 @@ const Account = ({ location }) => {
     console.log("post here");
   };
 
-  console.log(state);
+  const disconnectStripe = _ => {
+    console.log("Hacer algo");
+    /*
+    if (state.name !== "") {
+      let { name, email } = state;
+      axios
+        .put(`${URI}/api/users/${accountId}`, { name, email }, { headers: { Authorization: `Bearer ${getToken()}` } })
+        .then(r => console.log(r.status))
+        .catch(e => console.log(e));
+    }
+    */
+  }
+
+  let stripeButton, saveButton, paymentInfo;
+  if (getUserId() === accountId && state.finishedFetch) {
+    paymentInfo = <h2>Payment info</h2>;
+    saveButton = <Button variant="main" onClick={onClick}>Save</Button>;
+    if (state.stripeId !== "") {
+      stripeButton = <Button onClick={disconnectStripe} variant="primary">S | Disconnect your stripe account</Button>
+    }
+    else {
+      stripeButton = <Button href={OAuthLink} variant="primary">S | Connect with Stripe</Button>
+    }
+  }
+
   return (
     <Container fluid className="App">
       <Container>
@@ -111,12 +139,9 @@ const Account = ({ location }) => {
                   </Form.Group>
                 </Col>
               </Row>
-              <h2>Payment info</h2>
-              {/* will change for stripe button */}
-              <Button href={OAuthLink} variant="primary">Connect with Stripe</Button>
-              <Button variant="main" onClick={onClick}>
-                Save
-              </Button>
+              {paymentInfo}
+              {stripeButton}
+              {saveButton}
             </Form>
           </Card.Body>
         </Card>
