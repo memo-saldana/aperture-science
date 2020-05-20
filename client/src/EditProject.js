@@ -7,7 +7,7 @@ import {
 } from "./CreateProject";
 import { getToken } from "./TokenUtilities";
 import React, { useReducer, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { URI } from "./config";
 import ProjectForm from "./ProjectForm";
 
@@ -40,12 +40,13 @@ export const dateUnParser = (date) => {
   return "";
 };
 
-const EditProject = ({ history }) => {
+const EditProject = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [categories, setCategories] = useState([{}]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
+  
+  let history = useHistory();
   let location = useLocation();
   const queryString = require("query-string");
   let parsed = queryString.parse(location.search);

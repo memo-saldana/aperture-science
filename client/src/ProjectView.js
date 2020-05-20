@@ -10,6 +10,7 @@ import Jumbotron from "react-bootstrap/Jumbotron";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import React, { useEffect, useReducer } from "react";
 import Row from "react-bootstrap/Row";
+import { useLocation } from "react-router-dom";
 import { URI } from "./config";
 
 const initialState = {
@@ -36,9 +37,10 @@ const formatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
 });
 
-const ProjectView = ({ location }) => {
+const ProjectView = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  let location = useLocation();
   const queryString = require("query-string");
   let parsed = queryString.parse(location.search);
   let { owner, projectId } = parsed;

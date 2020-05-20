@@ -7,6 +7,7 @@ import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import Row from "react-bootstrap/Row";
+import { useHistory } from "react-router-dom";
 import { URI } from "./config";
 
 function checkInputs(email, password) {
@@ -16,10 +17,11 @@ function checkInputs(email, password) {
   return false;
 }
 
-const Login = ({history, loginHandler}) => {
+const Login = ({ loginHandler }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  let history = useHistory();
 
   const _login = async e => {
     e.preventDefault();

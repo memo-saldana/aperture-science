@@ -2,6 +2,7 @@ import axios from "axios";
 import { getUserId, getToken } from "./TokenUtilities";
 import ProjectForm from "./ProjectForm";
 import React, { useReducer, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { URI } from "./config";
 
 const initialState = {
@@ -56,11 +57,12 @@ export function checkInputs(state, startDate, endDate, categories) {
   return dateObj;
 };
 
-const CreateProject = ({ history }) => {
+const CreateProject = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [categories, setCategories] = useState([{}]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  let history = useHistory();
 
   useEffect(() => {
     const today = new Date();
