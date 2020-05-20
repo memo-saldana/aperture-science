@@ -9,10 +9,12 @@ import Image from "react-bootstrap/Image";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import React, { useEffect, useReducer } from "react";
+import { getToken, getUserId } from "./TokenUtilities";
 import Row from "react-bootstrap/Row";
 import InputGroup from 'react-bootstrap/InputGroup'
 import FormControl from 'react-bootstrap/FormControl'
 import { URI } from "./config";
+import { loadStripe } from "@stripe/stripe-js";
 
 const initialState = {
   title: "",
@@ -25,6 +27,8 @@ const initialState = {
   userName: "",
   amount: 0.0
 };
+
+const stripePromise = loadStripe('pk_test_bdfSjCaZaFmllllTsgqBBLYn00pzIjcm72');
 
 function checkInputs(state) {
   if (
@@ -58,8 +62,6 @@ const ProjectView = ({ location }) => {
   const queryString = require("query-string");
   let parsed = queryString.parse(location.search);
   let { owner, projectId } = parsed;
-
-  console.log(parsed);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -99,16 +101,12 @@ const ProjectView = ({ location }) => {
   const _checkoutHandler = _ => {
     if (checkInputs(state)) {
       localStorage.setItem("lastDonatedProject", projectId);
-      console.log("Guarde el ultimo donated");
-      /*
-      //Mandar amount
-      let {amount} = state;
 
+      let { amount } = state;
+      amount = amount * 100;
       return axios
-        .get(URI + `/api/projects/${projectId}/donate`)
+        .post(URI + `/api/projects/${projectId}/users/${getUserId()}`, { amount }, { headers: { Authorization: `Bearer ${getToken()}` } })
         .then(response => {
-          //NECESITO EL SESSION ID
-
           return response;
         })
         .catch(error => {
@@ -116,14 +114,17 @@ const ProjectView = ({ location }) => {
             return error.response.data.message;
           } else return error.message;
         });
-        */
     }
   };
 
   const _checkout = async e => {
     e.preventDefault();
-    let response = await _checkoutHandler();
-    console.log(response);
+    let data = await _checkoutHandler();
+    const sessionId = data.data.sessionId;
+    const stripe = await stripePromise;
+    const { error } = await stripe.redirectToCheckout({
+      sessionId,
+    });
   };
 
   const _handleKeyDown = e => {
@@ -170,7 +171,7 @@ const ProjectView = ({ location }) => {
                         <InputGroup.Prepend>
                           <InputGroup.Text>$</InputGroup.Text>
                         </InputGroup.Prepend>
-                        <FormControl 
+                        <FormControl
                           type="number"
                           step="0.01"
                           placeholder="0.00"
@@ -180,7 +181,7 @@ const ProjectView = ({ location }) => {
                           aria-label="Amount (to the nearest dollar)" />
                       </InputGroup>
                       <p className="comissionText">5% will be discounted as commission</p>
-                      <Button 
+                      <Button
                         onClick={_checkout}
                         block variant="main mt-auto">
                         Back this project now!
