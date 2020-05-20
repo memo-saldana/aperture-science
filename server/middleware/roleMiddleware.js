@@ -26,7 +26,7 @@ mw.isAdmin = async (req, res, next) =>{
 };
 
 mw.checkLogin = async (req, res, next) =>{
-  const token = req.headers['authorization'];
+  let token = req.headers['authorization'];
   if (!token) {
     return next();
   }
