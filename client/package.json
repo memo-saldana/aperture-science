@@ -18,7 +18,10 @@
     "react-icons": "^3.9.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
-    "react-stripe-elements": "^6.1.2"
+    "query-string": "^6.12.1",
+    "react-stripe-elements": "^6.1.2",
+    "react-stripe-checkout": "^2.6.3",
+    "stripe": "^8.49.0"
   },
   "scripts": {
     "start": "react-scripts start",
