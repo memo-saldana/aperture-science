@@ -35,7 +35,7 @@ mw.checkLogin = async (req, res, next) =>{
     next()
   }
   console.log('token :>> ', token);
-  const data = await jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
+  const data = await jwt.verify(token, process.env.JWT_SECRET);
   const user = await User.findById(data._id).select('+role +tokens +bActive').exec();
   if (user && !user.tokens.includes(token.split(' ')[1])) {
     return Promise.reject(new MyError(405,
