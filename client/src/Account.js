@@ -39,16 +39,16 @@ const Account = () => {
     console.log("post here");
   };
 
-  console.log(state);
+  console.log(localStorage.userId);
   return (
     <Container fluid className="App">
+      <h1 className="display-4 pt-4 mb-4">Account Details</h1>
       <Container>
-        <h1 className="display-4 pt-4 mb-4">Account Details</h1>
-        <Card>
+        <Card className="w-100">
           <Card.Body>
             <Form>
               <Row className="align-items-center mb-3">
-                <Col md={3}>
+                <Col md={4}>
                   <div className="account-image">
                     <Image
                       className="mb-3"
@@ -58,7 +58,7 @@ const Account = () => {
                     />
                   </div>
                 </Col>
-                <Col md={9}>
+                <Col md={8}>
                   <Form.Group controlId="formName">
                     <Form.Label className="d-inline-block">
                       Name: <span className="error">{state.nameError}</span>
