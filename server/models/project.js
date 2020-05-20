@@ -79,7 +79,7 @@ projectSchema.statics.getAll = async function(page, pageSize, category, userId) 
 }
 
 projectSchema.statics.getOneById = async function(projectId) {
-  const project = await this.findOne({bActive: true, _id: projectId}).populate('owner').exec();
+  const project = await this.findOne({bActive: true, _id: projectId}).populate('owner category').exec();
 
   if(!project) {
     return Promise.reject(new MyError(404, "Project not found."));
