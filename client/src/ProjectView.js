@@ -98,11 +98,17 @@ const ProjectView = ({ location }) => {
 
   const _checkoutHandler = _ => {
     if (checkInputs(state)) {
+      localStorage.setItem("lastDonatedProject", projectId);
+      console.log("Guarde el ultimo donated");
+      /*
+      //Mandar amount
       let {amount} = state;
-      console.log(URI + `/api/projects/${projectId}/donate`)
+
       return axios
         .get(URI + `/api/projects/${projectId}/donate`)
         .then(response => {
+          //NECESITO EL SESSION ID
+
           return response;
         })
         .catch(error => {
@@ -110,12 +116,12 @@ const ProjectView = ({ location }) => {
             return error.response.data.message;
           } else return error.message;
         });
+        */
     }
   };
 
   const _checkout = async e => {
     e.preventDefault();
-    console.log(localStorage.userId)
     let response = await _checkoutHandler();
     console.log(response);
   };
