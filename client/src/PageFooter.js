@@ -6,7 +6,7 @@ const PageFooter = ({ current, setCurrent, numPages }) => {
   let items = [];
   for (let i = 1; i <= numPages; i++) {
     items.push(
-      <PageItem key={i} active={i === current}>
+      <PageItem key={i} active={i === current} onClick={() => setCurrent(i)}>
         {i}
       </PageItem>
     );
@@ -15,12 +15,12 @@ const PageFooter = ({ current, setCurrent, numPages }) => {
   return (
     <Pagination>
       <Pagination.Prev
-        disabled={current >= 1}
+        disabled={current === 1}
         onClick={() => setCurrent(current - 1)}
       />
       {items}
       <Pagination.Next
-        disabled={numPages >= 1 || current !== numPages}
+        disabled={current >= numPages }
         onClick={() => setCurrent(current + 1)}
       />
     </Pagination>

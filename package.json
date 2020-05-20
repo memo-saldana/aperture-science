@@ -21,6 +21,7 @@
   "homepage": "https://github.com/memo-saldana/aperture-science#readme",
   "dependencies": {
     "query-string": "^6.12.1",
+    "react-stripe-checkout": "^2.6.3",
     "stripe": "^8.49.0"
   }
 }

@@ -15,8 +15,11 @@ ctr.getOne = () => async (req, res, next) => {
   
   const query = User.findOne({_id: userId})
 
-  if(!req.user || req.user && req.user._id.toString() !== userId) {
+  if(!req.user || req.user && req.user._id.toString() !== userId || req.user.role == 'admin') {
     query.select('name about');
+  }
+  else {
+    query.select('+stripeId')
   }
 
   const user = await query.exec();
