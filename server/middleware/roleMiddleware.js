@@ -32,7 +32,7 @@ mw.checkLogin = async (req, res, next) =>{
   }
   token = token.split(' ')[1];
   if(!token || token.length > 0) {
-    next()
+    return next()
   }
   console.log('token :>> ', token);
   const data = await jwt.verify(token, process.env.JWT_SECRET);
