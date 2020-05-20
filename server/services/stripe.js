@@ -51,7 +51,8 @@ serv.getCustomer = (user) => {
             // console.log('email :', user.data.correo );
             stripe.customers.create({
               id: user._id.toString(),
-              email: user.data.correo,
+              email: user.email,
+              name: user.name
             })
                 .then( (customer) => {
                   return resolve(customer);

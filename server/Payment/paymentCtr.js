@@ -44,7 +44,16 @@ ctr.payProject = () => async (req, res, next) => {
 
 ctr.createSession = () => async (req, res, next) => {
   const {projectId, userId} = req.params;
-  
+  let {amount} = req.body;
+
+  try {
+    amount = parseInt(amount)
+    if ( amount <= 0) throw Error('Negative')
+    if (isNaN(amount)) throw Error('NaN')
+  } catch(e) {
+    console.log('e :>> ', e);
+    throw new MyError(400, "Amount must be a positive int")
+  }
   const user = userId == req.user._id.toString() ? 
     req.user :
     await User.findOne({_id: userId}).exec();
@@ -58,7 +67,7 @@ ctr.createSession = () => async (req, res, next) => {
 
   const session = await stripe.createSession(user, project, amount);
 
-  return res.status(200).json({session});
+  return res.status(200).json({sessionId: session.id});
 }
 
 module.exports = ctr;
