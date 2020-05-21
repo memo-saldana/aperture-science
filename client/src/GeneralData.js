@@ -11,6 +11,7 @@ const GeneralData = ({
   subtitle,
   subtitleError,
   categories,
+  selectedCategory,
   selectedCategoryError,
   dateError,
   startDate,
@@ -56,7 +57,7 @@ const GeneralData = ({
             Category
             <span className="error">{selectedCategoryError}</span>
           </Form.Label>
-          <Form.Control as="select" name="selectedCategory" onChange={onChange}>
+          <Form.Control as="select" name="selectedCategory" value={selectedCategory} onChange={onChange}>
             {categories.map((category, index) => {
               return (
                 <option key={category._id || index}>{category.name}</option>

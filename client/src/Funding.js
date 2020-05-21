@@ -16,7 +16,7 @@ const Funding = ({ onChange, goal }) => {
             name="goal"
             onChange={onChange}
             min={10}
-            value={goal}
+            value={goal.toString(10)}
           />
         </Form.Group>
       </Card.Body>
