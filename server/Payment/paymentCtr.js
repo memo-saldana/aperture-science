@@ -48,7 +48,7 @@ ctr.payProject = () => async (req, res, next) => {
       console.log("not handled.");
       
   }
-  return res.status(200).json({message:'Payment successfull'});
+  return res.json({received: true});
 }
 
 ctr.createSession = () => async (req, res, next) => {
@@ -73,6 +73,8 @@ ctr.createSession = () => async (req, res, next) => {
   }).populate('owner', '+stripeId').exec()
 
   if(!project) throw new MyError(404, "Project not found.");
+
+  console.log('project :>> ', project);
 
   const session = await stripe.createSession(user, project, amount);
 
