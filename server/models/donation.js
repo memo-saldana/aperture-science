@@ -32,6 +32,7 @@ donationSchema.statics.getAmountForProject = async function(projectId) {
   const data = await this.agreggate([{
     $match: {
       project: projectId,
+      status: 'Paid'
     },
   }, {
     $group: {

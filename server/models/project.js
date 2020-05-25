@@ -1,4 +1,5 @@
 const mongoose = require('mongoose'),
+      Donation = require('./donation'),
       MyError = require('./MyError');
 
 const projectSchema = new mongoose.Schema({
