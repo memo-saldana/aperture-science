@@ -23,12 +23,14 @@ require('./config/dbSetup');
 
 app.use(logger('dev'));
 app.use(cors());
+app.use(express.json());
+
 app.use((req, res, next) => {
   if(req.originalUrl === '/api/donate') {
     console.log('donate');
     next()
   } else {
-    bodyParser.josn()(req,res,next);
+    bodyParser.json()(req,res,next);
 
   }
 })
