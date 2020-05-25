@@ -28,7 +28,7 @@ app.use(express.json());
 app.use((req, res, next) => {
   if(req.originalUrl === '/api/donate') {
     console.log('donate');
-    bodyParser.raw({type: 'application/json'})(req,res,next);
+    next();
   } else {
     bodyParser.json()(req,res,next);
 

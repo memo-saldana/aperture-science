@@ -1,6 +1,7 @@
 const express = require("express"),
       router = express.Router({mergeParams: true}),
       aHandler = require('express-async-handler'),
+      bodyParser = require('body-parser'),
       {isAdmin, isOwnerOrAdmin, isLoggedIn} = require('../middleware/roleMiddleware'),
       paymentCtr = require('./paymentCtr');
 
@@ -14,6 +15,7 @@ router.get('/stripe',
 );
 
 router.post('/donate',
+  bodyParser.raw({type: 'application/json'}),
   aHandler( paymentCtr.payProject() ),
 );
 
