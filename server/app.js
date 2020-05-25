@@ -25,6 +25,7 @@ app.use(logger('dev'));
 app.use(cors());
 app.use((req, res, next) => {
   if(req.originalUrl === '/api/donate') {
+    console.log('donate');
     next()
   } else {
     bodyParser.josn()(req,res,next);
