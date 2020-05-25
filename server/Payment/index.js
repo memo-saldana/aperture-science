@@ -15,7 +15,6 @@ router.get('/stripe',
 );
 
 router.post('/donate',
-  bodyParser.raw({type: 'application/json'}),
   aHandler( paymentCtr.payProject() ),
 );
 

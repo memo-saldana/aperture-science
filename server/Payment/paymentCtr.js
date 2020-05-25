@@ -29,7 +29,6 @@ ctr.linkStripe = () => async (req, res, next) => {
 }
 
 ctr.payProject = () => async (req, res, next) => {
-  console.log("entering webhook");
   
   const event = await stripe.validateWebhook(req);
   
@@ -37,7 +36,13 @@ ctr.payProject = () => async (req, res, next) => {
     case 'checkout.session.completed':
       console.log("payment successful");
       const session = event.data.object;
-      console.log('session :>> ', session);
+      const donation = Donation.findOneAndUpdate({stripeSessionId: session.id}, {status: 'Paid'}, {new: true}).exec();
+      if(!donation) {
+        console.log('DONATION NOT FOUND');
+        
+      }
+
+      break;
     default:
       console.log('event.type :>> ', event.type);
       console.log("not handled.");
