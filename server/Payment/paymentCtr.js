@@ -1,6 +1,7 @@
 
 const User = require('../models/user'),
       Project = require('../models/project'),
+      Donation = require('../models/donation'),
       MyError = require('../middleware/MyError'),
       stripe = require('../services/stripe'),
       ctr = {};
@@ -28,6 +29,8 @@ ctr.linkStripe = () => async (req, res, next) => {
 }
 
 ctr.payProject = () => async (req, res, next) => {
+  console.log("entering webhook");
+  
   const event = await stripe.validateWebhook(req);
   
   switch(event.type) {
@@ -66,6 +69,15 @@ ctr.createSession = () => async (req, res, next) => {
   if(!project) throw new MyError(404, "Project not found.");
 
   const session = await stripe.createSession(user, project, amount);
+
+  const donation = new Donation({
+    donator: user._id,
+    project: project._id,
+    amount: amount,
+    stripeSessionId: session.id
+  })
+
+  await donation.save();
 
   return res.status(200).json({sessionId: session.id});
 }

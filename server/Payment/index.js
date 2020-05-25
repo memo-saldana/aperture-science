@@ -14,7 +14,6 @@ router.get('/stripe',
 );
 
 router.post('/donate',
-  aHandler( isOwnerOrAdmin ),
   aHandler( paymentCtr.payProject() ),
 );
 
