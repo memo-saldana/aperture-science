@@ -34,6 +34,7 @@ ctr.payProject = () => async (req, res, next) => {
   
   switch(event.type) {
     case 'checkout.session.completed':
+    case 'payment_intent.succeeded':
       console.log("payment successful");
       const session = event.data.object;
       const donation = Donation.findOneAndUpdate({stripeSessionId: session.id}, {status: 'Paid'}, {new: true}).exec();
