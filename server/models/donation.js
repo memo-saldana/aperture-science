@@ -28,4 +28,23 @@ const donationSchema = new mongoose.Schema({
   timestamps: true,
 })
 
+donationSchema.statics.getAmountForProject = async function(projectId) {
+  const data = await this.agreggate([{
+    $match: {
+      project: projectId,
+    },
+  }, {
+    $group: {
+      _id: null,
+      total: {
+        $sum: {$multiply: ['$amount', 0.95]}
+      },
+    },
+  }]).exec();
+
+  console.log('data :>> ', data);
+
+  return data.length > 0 ? data[0].total : 0;
+}
+
 module.exports = mongoose.model('Donation', donationSchema);

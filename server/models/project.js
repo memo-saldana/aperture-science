@@ -73,9 +73,23 @@ projectSchema.statics.getAll = async function(page, pageSize, category, userId) 
     this.countDocuments(query)
   ])
 
+  const promises = projects.map(project => {
+    return new Promise((resolve, reject) => {
+      Donation.getAmountForProject(project._id)
+      .then(total => {
+        const projectObject = project.toObject();
+        projectObject.totalDonated = total;
+        projectObject.percentage = (totalDonated / goal) * 100;
+        return resolve(projectObject)
+      })
+      .catch(err => reject(err))
+    });
+  })
+
+  const allProjects = await Promise.all(promises)
   // console.log('projects :>> ', projects);
 
-  return {projects, page, totalPages: Math.ceil(count/pageSize)}
+  return {projects: allProjects, page, totalPages: Math.ceil(count/pageSize)}
 }
 
 projectSchema.statics.getOneById = async function(projectId) {
@@ -85,7 +99,14 @@ projectSchema.statics.getOneById = async function(projectId) {
     return Promise.reject(new MyError(404, "Project not found."));
   }
 
-  return project;
+  const total = await Donation.getAmountForProject(project._id)
+
+
+  const projectObject = project.toObject();
+        projectObject.totalDonated = total;
+        projectObject.percentage = (totalDonated / goal) * 100;
+
+  return projectObject;
 }
 
 projectSchema.statics.deactivate = async function(projectId, userId) {
