@@ -26,8 +26,6 @@ app.use(cors());
 
 app.use((req, res, next) => {
   if(req.originalUrl === '/api/donate') {
-    console.log('donate');
-    // next();
     bodyParser.raw({type: 'application/json'})(req,res,next);
   } else {
     express.json()(req,res,next);

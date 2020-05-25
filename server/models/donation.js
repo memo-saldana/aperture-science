@@ -29,7 +29,7 @@ const donationSchema = new mongoose.Schema({
 })
 
 donationSchema.statics.getAmountForProject = async function(projectId) {
-  const data = await this.agreggate([{
+  const data = await this.aggregate([{
     $match: {
       project: projectId,
       status: 'Paid'

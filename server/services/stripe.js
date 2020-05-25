@@ -25,9 +25,7 @@ serv.linkAccount = async code => {
 
 serv.validateWebhook = req => {
   return new Promise((resolve, reject) => {
-    console.log('req.headers :>> ', req.headers);
     const sig = req.headers['stripe-signature'];
-    console.log('sig :>> ', sig);
     let event;
     try {
       event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
