@@ -80,7 +80,8 @@ projectSchema.statics.getAll = async function(page, pageSize, category, userId) 
       .then(total => {
         const projectObject = project.toObject();
         projectObject.totalDonated = total;
-        projectObject.percentage = (totalDonated / goal) * 100;
+        const percentage = (projectObject.totalDonated / projectObject.goal) * 100;
+        projectObject.percentage = percentage
         return resolve(projectObject)
       })
       .catch(err => reject(err))
@@ -104,8 +105,9 @@ projectSchema.statics.getOneById = async function(projectId) {
 
 
   const projectObject = project.toObject();
-        projectObject.totalDonated = total;
-        projectObject.percentage = (totalDonated / goal) * 100;
+  projectObject.totalDonated = total;
+  const percentage = (projectObject.totalDonated / projectObject.goal) * 100;
+  projectObject.percentage = percentage
 
   return projectObject;
 }
