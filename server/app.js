@@ -23,8 +23,14 @@ require('./config/dbSetup');
 
 app.use(logger('dev'));
 app.use(cors());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.json());
+app.use((req, res, next) => {
+  if(req.originalUrl === '/api/donate') {
+    next()
+  } else {
+    bodyParser.josn()(req,res,next);
+
+  }
+})
 
 // Serves build
 app.use(express.static(path.resolve('./client/build')));
