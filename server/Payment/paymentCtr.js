@@ -36,7 +36,8 @@ ctr.payProject = () => async (req, res, next) => {
   switch(event.type) {
     case 'checkout.session.completed':
       console.log("payment successful");
-      
+      const session = event.data.object;
+      console.log('session :>> ', session);
     default:
       console.log('event.type :>> ', event.type);
       console.log("not handled.");
