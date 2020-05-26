@@ -78,7 +78,7 @@ ctr.createSession = () => async (req, res, next) => {
   console.log('project :>> ', project);
 
   const session = await stripe.createSession(user, project, amount);
-
+  console.log('session donation :>> ', session);
   const donation = new Donation({
     donator: user._id,
     project: project._id,
