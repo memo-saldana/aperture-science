@@ -41,9 +41,7 @@ serv.validateWebhook = req => {
 serv.getCustomer = (user) => {
   return new Promise((resolve, reject) => {
     stripe.customers.retrieve( user._id.toString() )
-        .then( (customer) => {
-          return resolve(customer.id);
-        })
+        .then(customer => resolve(customer))
         .catch( (error) => {
           console.log('error : ', error);
           if (error.code = 'resource_missing') {
@@ -88,7 +86,7 @@ serv.createSession = (user, project, amount) => {
           },
         },
         success_url: process.env.BASE_URL + '/success',
-        cancel_url: process.env.BASE_URL + '/failue',
+        cancel_url: process.env.BASE_URL + '/project?projectId=' + project._id.toString(),
         customer: customer.id
       });
     })

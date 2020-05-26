@@ -85,11 +85,11 @@ ctr.getForOneUser = () => async (req, res, next) => {
 ctr.getStripeID = () => async (req, res, next) => {
   const {projectId} = req.params;
 
-  const customerId = await stripe.getCustomer(req.user);
+  const customer = await stripe.getCustomer(req.user);
   const project = await Project.getOneById(projectId);
 
   return project.owner.stripeId ? 
-    res.status(200).json({stripeId: project.owner.stripeId, customerId}) :
+    res.status(200).json({stripeId: project.owner.stripeId, customerId: customer.id}) :
     res.status(400).json({message: "The owner of the project has not setup payment information."})
 
 }
