@@ -75,7 +75,7 @@ serv.createSession = (user, project, amount) => {
       return stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [{
-          name: "Donation for " + project.name + " on Opening Science.",
+          name: "Donation for " + project.title + " by " + project.owner.name + " on Opening Science.",
           amount: amount,
           currency: 'mxn',
           quantity: 1
@@ -87,7 +87,8 @@ serv.createSession = (user, project, amount) => {
           },
         },
         success_url: process.env.BASE_URL + '/success',
-        cancel_url: process.env.BASE_URL + '/failue'
+        cancel_url: process.env.BASE_URL + '/failue',
+        customer: customer.id
       });
     })
     .then(session => resolve(session))
