@@ -59,11 +59,14 @@ projectSchema.statics.getAll = async function(page, pageSize, category, userId) 
   if(category && category.length > 0) {
     query.category = category
   }
+
+  console.log('userId :>> ', userId);
   
   if(userId && userId.length > 0) {
     query.owner = userId
   }
   
+  console.log('query :>> ', query);
 
   const [projects, count] = await Promise.all([
     this.find(query)

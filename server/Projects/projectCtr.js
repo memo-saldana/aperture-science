@@ -43,7 +43,7 @@ ctr.create = () => async (req, res, next) => {
 
 ctr.update = () => async (req, res, next) => {
   const {userId, projectId} = req.params;
-  const projectBody = req.params;
+  const projectBody = req.body;
 
   let user = await User.findOne({_id: userId}).exec();
 
@@ -74,10 +74,12 @@ ctr.getForOneUser = () => async (req, res, next) => {
 
   let user = await User.findOne({_id: userId}).exec();
 
+  console.log('user :>> ', user);
+
   if (!user) {
     throw new MyError(400, 'Owner does not exist')
   }
-  const body = await Project.getAll(page, pageSize, category, user._id);
+  const body = await Project.getAll(page, pageSize, category, userId);
 
   return res.status(200).json(body); 
 }
