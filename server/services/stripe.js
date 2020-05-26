@@ -86,7 +86,7 @@ serv.createSession = (user, project, amount) => {
           },
         },
         success_url: process.env.BASE_URL + '/success',
-        cancel_url: process.env.BASE_URL + '/project?projectId=' + project._id.toString(),
+        cancel_url: process.env.BASE_URL + '/failure',
         customer: customer.id
       });
     })
