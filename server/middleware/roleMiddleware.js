@@ -31,7 +31,9 @@ mw.checkLogin = async (req, res, next) =>{
     console.log("token not found");
     return next();
   }
+  console.log('token :>> ', token);
   token = token.split(' ')[1];
+  console.log('token :>> ', token);
   if(!token || token.length > 0) {
     console.log("token mallformed");
     return next()
