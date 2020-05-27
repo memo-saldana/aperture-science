@@ -19,7 +19,6 @@ function Main() {
       );
 
       const { projects, totalPages, page } = data;
-      console.log('projects :>> ', projects);
       let dataChunks = [];
 
       while (projects.length) {
@@ -31,7 +30,6 @@ function Main() {
       setTotalPages(totalPages);
       setLoading(false);
     };
-    console.log("quepedo");
     
     fetchData();
   }, [current]);

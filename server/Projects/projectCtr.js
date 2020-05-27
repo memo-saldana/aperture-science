@@ -74,8 +74,6 @@ ctr.getForOneUser = () => async (req, res, next) => {
 
   let user = await User.findOne({_id: userId}).exec();
 
-  console.log('user :>> ', user);
-
   if (!user) {
     throw new MyError(400, 'Owner does not exist')
   }
