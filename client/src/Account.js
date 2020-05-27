@@ -13,7 +13,7 @@ import { URI } from "./config";
 
 const initialState = {
   name: "",
-  about: "El chocomilk está RIQUIIIIIIISMO",
+  about: "",
   email: "",
   stripeId: "",
   nameError: "",
@@ -46,11 +46,19 @@ const Account = ({ location }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      let { data } = await axios(`${URI}/api/users/${accountId}`, { headers: { Authorization: `Bearer ${getToken()}` } });
+      let token;
+      if (!getUserId()) {
+        token = "";
+      }
+      else {
+        token = getToken();
+      }
+      let { data } = await axios(`${URI}/api/users/${accountId}`, { headers: { Authorization: `Bearer ${token}` } });
       data = data["user"];
-      const { name, email, stripeId } = data;
+      const { name, about, email, stripeId } = data;
       dispatch({ field: "name", value: name });
       dispatch({ field: "email", value: email });
+      dispatch({ field: "about", value: about});
       dispatch({ field: "stripeId", value: stripeId });
 
       let state = await axios(`${URI}/api/users/${accountId}/state`, { headers: { Authorization: `Bearer ${getToken()}` } });
@@ -61,36 +69,55 @@ const Account = ({ location }) => {
     fetchData();
   }, [owner, accountId]);
 
-  const onClick = (_) => {
+  const _saveUser = _ => {
+      let { name, about } = state;
+      return axios
+        .put(`${URI}/api/users/${accountId}`, { name, about }, { headers: { Authorization: `Bearer ${getToken()}` } })
+        .then(response => {
+          return response;
+        })
+        .catch(error => {
+          if (error.response) {
+            return error.response.data.message;
+          } else return error.message;
+        });
+    }
+
+  const onClick = async _ => {
     if (state.name === "") {
       return dispatch({ field: "nameError", value: "Name cannot be empty" });
     }
-
-    console.log("post here");
+    let ans = await _saveUser();
   };
 
-  const disconnectStripe = _ => {
-    console.log("Hacer algo");
-    /*
-    if (state.name !== "") {
-      let { name, email } = state;
-      axios
-        .put(`${URI}/api/users/${accountId}`, { name, email }, { headers: { Authorization: `Bearer ${getToken()}` } })
-        .then(r => console.log(r.status))
-        .catch(e => console.log(e));
+  const _deleteStripe = _ => {
+    let stripeId = "";
+      return axios
+        .put(`${URI}/api/users/${accountId}`, { stripeId }, { headers: { Authorization: `Bearer ${getToken()}` } })
+        .then(response => {
+          return response;
+        })
+        .catch(error => {
+          if (error.response) {
+            return error.response.data.message;
+          } else return error.message;
+        });
     }
-    */
+
+  const disconnectStripe = async _ => {
+    let ans = await _deleteStripe();
+    dispatch({ field: "stripeId", value: "" });
   }
 
   let stripeButton, saveButton, paymentInfo;
   if (getUserId() === accountId && state.finishedFetch) {
     paymentInfo = <h2>Payment info</h2>;
     saveButton = <Button variant="main" onClick={onClick}>Save</Button>;
-    if (state.stripeId !== "") {
-      stripeButton = <Button onClick={disconnectStripe} variant="primary">S | Disconnect your stripe account</Button>
+    if (state.stripeId && state.stripeId !== "") {
+      stripeButton = <Button onClick={disconnectStripe} variant="primary">Disconnect your stripe account</Button>
     }
     else {
-      stripeButton = <Button href={OAuthLink} variant="primary">S | Connect with Stripe</Button>
+      stripeButton = <Button href={OAuthLink} variant="primary">Connect with Stripe</Button>
     }
   }
 
