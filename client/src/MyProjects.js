@@ -75,7 +75,7 @@ const MyProjects = () => {
                 title={project.title}
                 description={project.subtitle}
                 category={project.category.name}
-                completed={index}
+                completed={project.percentage}
                 days={project.daysLeft}
               />
             );

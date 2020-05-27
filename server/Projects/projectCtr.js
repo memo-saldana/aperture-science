@@ -24,7 +24,7 @@ ctr.create = () => async (req, res, next) => {
   const projectData = req.body;
   const {userId} = req.params;
 
-  let user = await User.findOne({_id: userId}).exec();
+  let user = await User.findOne({_id: userId}).select('+stripeId').exec();
 
   if (!user) {
     throw new MyError(400, 'Owner does not exist')
@@ -43,7 +43,7 @@ ctr.create = () => async (req, res, next) => {
 
 ctr.update = () => async (req, res, next) => {
   const {userId, projectId} = req.params;
-  const projectBody = req.params;
+  const projectBody = req.body;
 
   let user = await User.findOne({_id: userId}).exec();
 
@@ -74,10 +74,12 @@ ctr.getForOneUser = () => async (req, res, next) => {
 
   let user = await User.findOne({_id: userId}).exec();
 
+  console.log('user :>> ', user);
+
   if (!user) {
     throw new MyError(400, 'Owner does not exist')
   }
-  const body = await Project.getAll(page, pageSize, category, user._id);
+  const body = await Project.getAll(page, pageSize, category, userId);
 
   return res.status(200).json(body); 
 }
@@ -85,11 +87,11 @@ ctr.getForOneUser = () => async (req, res, next) => {
 ctr.getStripeID = () => async (req, res, next) => {
   const {projectId} = req.params;
 
-  const customerId = await stripe.getCustomerId(req.user);
+  const customer = await stripe.getCustomer(req.user);
   const project = await Project.getOneById(projectId);
 
   return project.owner.stripeId ? 
-    res.status(200).json({stripeId: project.owner.stripeId, customerId}) :
+    res.status(200).json({stripeId: project.owner.stripeId, customerId: customer.id}) :
     res.status(400).json({message: "The owner of the project has not setup payment information."})
 
 }

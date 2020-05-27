@@ -1,5 +1,6 @@
 const User = require('../models/user'),
       MyError = require('../middleware/MyError'),
+      stripe = require('../services/stripe'),
       ctr = {};
 
 ctr.getAll = () => async (req, res, next) => {
@@ -15,7 +16,7 @@ ctr.getOne = () => async (req, res, next) => {
   
   const query = User.findOne({_id: userId})
 
-  if(!req.user || req.user && req.user._id.toString() !== userId || req.user.role == 'admin') {
+  if(!req.user || (req.user && req.user._id.toString() !== userId) || req.user.role == 'admin') {    
     query.select('name about');
   }
   else {
@@ -32,12 +33,24 @@ ctr.getOne = () => async (req, res, next) => {
 
 ctr.update = () => async (req, res, next) => {
   const {userId} = req.params;
-  const userBody = req.params;
+  const userBody = req.body;
+  let disconnect = false
+  let newObj = {new: true}
+  if (userBody.stripeId == '') {
+    disconnect = true;
+    newObj = {new: false, fields: '+stripeId'};
+    userBody.stripeId = undefined;
+  }
 
-  const user = await User.findOneAndUpdate({_id: userId}, userBody, {new: true}).exec();
+  let user = await User.findOneAndUpdate({_id: userId}, userBody, newObj).exec();
 
   if (!user) {
     throw new MyError(404, 'User not found')
+  }
+  if(disconnect) {
+    await stripe.disconnect(user)
+    user = user.toObject()
+    delete user.stripeId
   }
 
   return res.status(200).json({user});

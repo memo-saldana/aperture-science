@@ -129,7 +129,7 @@ const CreateProject = ({ history }) => {
         subtitle: state.subtitle,
         description: state.description,
         category: state.selectedCategory,
-        goal: state.goal,
+        goal: state.goal*100,
         campaignStart: startDate,
         campaignEnd: endDate,
         picture: state.fileURL,

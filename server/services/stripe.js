@@ -31,18 +31,17 @@ serv.validateWebhook = req => {
       event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
     }
     catch(err) {
+      console.log('err :>> ', err);
       return reject(new MyError(400, `Webhook error: ${err.message}`));
     }
     resolve(event)
   });
 }
 
-serv.getCustomerId = (user) => {
+serv.getCustomer = (user) => {
   return new Promise((resolve, reject) => {
     stripe.customers.retrieve( user._id.toString() )
-        .then( (customer) => {
-          return resolve(customer);
-        })
+        .then(customer => resolve(customer))
         .catch( (error) => {
           console.log('error : ', error);
           if (error.code = 'resource_missing') {
@@ -51,7 +50,8 @@ serv.getCustomerId = (user) => {
             // console.log('email :', user.data.correo );
             stripe.customers.create({
               id: user._id.toString(),
-              email: user.data.correo,
+              email: user.email,
+              name: user.name
             })
                 .then( (customer) => {
                   return resolve(customer);
@@ -65,5 +65,42 @@ serv.getCustomerId = (user) => {
         });
   });
 };
+
+serv.createSession = (user, project, amount) => {
+  return new Promise((resolve, reject) => {
+    serv.getCustomer(user)
+    .then(customer => {
+      return stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [{
+          name: "Donation for " + project.title + " by " + project.owner.name + " on Opening Science.",
+          amount: amount,
+          currency: 'mxn',
+          quantity: 1
+        }],
+        payment_intent_data: {
+          application_fee_amount: parseInt(amount*.05) > 100? parseInt(amount*.05) : 100,
+          transfer_data: {
+            destination: project.owner.stripeId
+          },
+        },
+        success_url: process.env.BASE_URL + '/success',
+        cancel_url: process.env.BASE_URL + '/failure',
+        customer: customer.id
+      });
+    })
+    .then(session => resolve(session))
+    .catch(err => reject(err))
+  });
+}
+
+serv.disconnect = async user => {
+  console.log('user :>> ', user);
+  const response = await stripe.oauth.deauthorize({
+    client_id: process.env.STRIPE_CLIENT_ID,
+    stripe_user_id: user.stripeId
+  })
+  return response
+}
 
 module.exports = serv;

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose'),
+      Donation = require('./donation'),
       MyError = require('./MyError');
 
 const projectSchema = new mongoose.Schema({
@@ -58,12 +59,12 @@ projectSchema.statics.getAll = async function(page, pageSize, category, userId) 
   if(category && category.length > 0) {
     query.category = category
   }
+
   
   if(userId && userId.length > 0) {
     query.owner = userId
   }
   
-
   const [projects, count] = await Promise.all([
     this.find(query)
            .skip(currentPage * pageSize)
@@ -73,19 +74,44 @@ projectSchema.statics.getAll = async function(page, pageSize, category, userId) 
     this.countDocuments(query)
   ])
 
+  const promises = projects.map(project => {
+    return new Promise((resolve, reject) => {
+      Donation.getAmountForProject(project._id)
+      .then(total => {
+        const projectObject = project.toObject();
+        projectObject.totalDonated = total;
+        const percentage = (projectObject.totalDonated / projectObject.goal) * 100;
+        projectObject.percentage = percentage
+        return resolve(projectObject)
+      })
+      .catch(err => reject(err))
+    });
+  })
+
+  const allProjects = await Promise.all(promises)
   // console.log('projects :>> ', projects);
 
-  return {projects, page, totalPages: Math.ceil(count/pageSize)}
+  return {projects: allProjects, page, totalPages: Math.ceil(count/pageSize)}
 }
 
 projectSchema.statics.getOneById = async function(projectId) {
-  const project = await this.findOne({bActive: true, _id: projectId}).populate('owner').exec();
+  const project = await this.findOne({bActive: true, _id: projectId}).populate('owner category').exec();
 
   if(!project) {
     return Promise.reject(new MyError(404, "Project not found."));
   }
 
-  return project;
+  const total = await Donation.getAmountForProject(project._id)
+
+
+  const projectObject = project.toObject();
+  projectObject.totalDonated = total;
+  let percentage = (projectObject.totalDonated / projectObject.goal) * 10000;
+  percentage = parseInt(percentage)
+  percentage = percentage/100
+  projectObject.percentage = percentage
+
+  return projectObject;
 }
 
 projectSchema.statics.deactivate = async function(projectId, userId) {

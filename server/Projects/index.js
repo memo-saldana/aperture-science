@@ -12,10 +12,10 @@ router.get('/projects/:projectId',
   aHandler( projectCtr.getOne() ),
 );
 
-router.get('/projects/:projectId/donate',
-  aHandler(isLoggedIn),
-  aHandler( projectCtr.getStripeID() ),
-);
+// router.get('/projects/:projectId/donate',
+//   aHandler(isLoggedIn),
+//   aHandler( projectCtr.getStripeID() ),
+// );
 
 router.post('/users/:userId/projects',
   aHandler( isOwnerOrAdmin ),
