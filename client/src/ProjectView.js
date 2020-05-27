@@ -48,7 +48,7 @@ function reducer(state, { field, value }) {
 
 const formatter = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "USD",
+  currency: "MXN",
   minimumFractionDigits: 2,
 });
 
@@ -72,6 +72,7 @@ const ProjectView = ({ location }) => {
         title,
         subtitle,
         picture,
+        percentage,
         goal,
         description,
         campaignStart,
@@ -91,8 +92,10 @@ const ProjectView = ({ location }) => {
       dispatch({ field: "picture", value: picture });
       dispatch({ field: "description", value: descriptionParaph });
       dispatch({ field: "daysLeft", value: daysLeft });
-      dispatch({ field: "goal", value: formatter.format(goal) });
+      dispatch({ field: "percentage", value: percentage });
+      dispatch({ field: "goal", value: formatter.format(goal/100) });
       dispatch({ field: "userName", value: owner.name });
+      dispatch({ field: "aboutOwner", value: owner.about });
     };
 
     fetchData();
@@ -100,6 +103,7 @@ const ProjectView = ({ location }) => {
 
   const _checkoutHandler = _ => {
     if (checkInputs(state)) {
+      console.log('projectId :>> ', projectId);
       localStorage.setItem("lastDonatedProject", projectId);
 
       let { amount } = state;
@@ -155,12 +159,12 @@ const ProjectView = ({ location }) => {
                       <h6>{state.subtitle}</h6>
                       <div>
                         <span>
-                          <ProgressBar now={18} className="mt-5" />
+                          <ProgressBar now={state.percentage} className="mt-5" />
                           <p>
                             Goal: <b>{state.goal}</b>
                           </p>
                         </span>
-                        <h3 className="card-title">Progress: 18%</h3>
+                        <h3 className="card-title">Progress: {state.percentage}%</h3>
                         <h5 className="card-text mb-5">
                           {state.daysLeft > 1
                             ? state.daysLeft + " days left!"
@@ -209,10 +213,7 @@ const ProjectView = ({ location }) => {
                   />
                   <h3 className="text-center card-title">{state.userName}</h3>
                   <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                    vitae ex at ante vulputate dignissim a imperdiet orci. Etiam
-                    hendrerit consectetur neque sit amet sodales. Quisque elit
-                    est, dictum et viverra nec, tempor ut velit.
+                    {state.aboutOwner}
                   </p>
                 </Card.Body>
               </Card>

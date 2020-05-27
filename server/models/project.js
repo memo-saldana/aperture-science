@@ -60,14 +60,11 @@ projectSchema.statics.getAll = async function(page, pageSize, category, userId) 
     query.category = category
   }
 
-  console.log('userId :>> ', userId);
   
   if(userId && userId.length > 0) {
     query.owner = userId
   }
   
-  console.log('query :>> ', query);
-
   const [projects, count] = await Promise.all([
     this.find(query)
            .skip(currentPage * pageSize)
@@ -109,7 +106,9 @@ projectSchema.statics.getOneById = async function(projectId) {
 
   const projectObject = project.toObject();
   projectObject.totalDonated = total;
-  const percentage = (projectObject.totalDonated / projectObject.goal) * 100;
+  let percentage = (projectObject.totalDonated / projectObject.goal) * 10000;
+  percentage = parseInt(percentage)
+  percentage = percentage/100
   projectObject.percentage = percentage
 
   return projectObject;

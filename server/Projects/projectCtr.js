@@ -24,7 +24,7 @@ ctr.create = () => async (req, res, next) => {
   const projectData = req.body;
   const {userId} = req.params;
 
-  let user = await User.findOne({_id: userId}).exec();
+  let user = await User.findOne({_id: userId}).select('+stripeId').exec();
 
   if (!user) {
     throw new MyError(400, 'Owner does not exist')
