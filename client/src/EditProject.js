@@ -74,7 +74,7 @@ const EditProject = () => {
       dispatch({ field: "subtitle", value: project.subtitle });
       dispatch({ field: "description", value: project.description });
       dispatch({ field: "selectedCategory", value: project.category });
-      dispatch({ field: "goal", value: project.goal });
+      dispatch({ field: "goal", value: project.goal/100 });
       dispatch({ field: "fileURL", value: project.picture });
 
       let stDate = project.campaignStart;
@@ -143,7 +143,7 @@ const EditProject = () => {
         subtitle: state.subtitle,
         description: state.description,
         category: state.selectedCategory,
-        goal: state.goal,
+        goal: state.goal*100,
         campaignStart: startDate,
         campaignEnd: endDate,
         picture: state.fileURL,

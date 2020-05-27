@@ -24,7 +24,7 @@ const Funding = ({ onChange, goal }) => {
               value={goal.toString(10)}
             />
             <InputGroup.Append>
-              <InputGroup.Text>USD</InputGroup.Text>
+              <InputGroup.Text>MXN</InputGroup.Text>
             </InputGroup.Append>
           </InputGroup>
         </Form.Group>
