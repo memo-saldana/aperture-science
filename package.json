@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "server/app.js",
-  "dependencies": {},
+  "dependencies": {
+    "react-toastify": "^6.0.5"
+  },
   "devDependencies": {},
   "scripts": {
     "postinstall": "cd server && npm install",

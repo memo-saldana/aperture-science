@@ -10,6 +10,8 @@ import React, { useEffect, useReducer } from "react";
 import { getToken, getUserId } from "./TokenUtilities";
 import Row from "react-bootstrap/Row";
 import { URI } from "./config";
+import { ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const initialState = {
   name: "",
@@ -28,7 +30,7 @@ function reducer(state, { field, value }) {
   };
 }
 
-const Account = ({ location }) => {
+const Account = ({ history, location }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const OAuthLink = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id=' + 'ca_H8sVQtZQ9URkeJKBgInu8Dck8gVKXcj7' + '&scope=read_write&state=' + state.userState;
@@ -74,12 +76,20 @@ const Account = ({ location }) => {
       return axios
         .put(`${URI}/api/users/${accountId}`, { name, about }, { headers: { Authorization: `Bearer ${getToken()}` } })
         .then(response => {
+          toast.success("Your account information was saved");
           return response;
         })
         .catch(error => {
           if (error.response) {
+            if (error.response.statusCode === 401 || error.response.statusCode === 405) {
+                history.push("/login");
+            } 
+            toast.error(error.response.data.message);
             return error.response.data.message;
-          } else return error.message;
+          } else {
+            toast.error("There was an error");
+            return error.message;
+          }
         });
     }
 
@@ -95,12 +105,21 @@ const Account = ({ location }) => {
       return axios
         .put(`${URI}/api/users/${accountId}`, { stripeId }, { headers: { Authorization: `Bearer ${getToken()}` } })
         .then(response => {
+          toast.success("Your stripe account was successfuly disconnected");
           return response;
         })
         .catch(error => {
+          console.log(error);
           if (error.response) {
+            if (error.response.statusCode === 401 || error.response.statusCode === 405) {
+              history.push("/login");
+            } 
+            toast.error(error.response.data.message);
             return error.response.data.message;
-          } else return error.message;
+          } else {
+            toast.error("There was an error");
+            return error.message;
+          }
         });
     }
 
@@ -114,15 +133,21 @@ const Account = ({ location }) => {
     paymentInfo = <h2>Payment info</h2>;
     saveButton = <Button variant="main" onClick={onClick}>Save</Button>;
     if (state.stripeId && state.stripeId !== "") {
-      stripeButton = <Button onClick={disconnectStripe} variant="primary">Disconnect your stripe account</Button>
+      stripeButton = <Button className="btnS" onClick={disconnectStripe} variant="primary">Disconnect your stripe account</Button>
     }
     else {
-      stripeButton = <Button href={OAuthLink} variant="primary">Connect with Stripe</Button>
+      stripeButton = <Button className="btnS" href={OAuthLink} variant="primary">Connect with Stripe</Button>
     }
   }
 
   return (
     <Container fluid className="App">
+      <>
+      <ToastContainer 
+        draggable={false}
+        autoClose={8000}
+      />
+      </>
       <Container>
         <h1 className="display-4 pt-4 mb-4">Account Details</h1>
         <Card>
