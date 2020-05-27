@@ -16,7 +16,7 @@ ctr.getOne = () => async (req, res, next) => {
   const {projectId} = req.params;
 
   const project = await Project.getOneById(projectId);
-  console.log('project :>> ', project);
+
   return res.status(200).json({project});
 }
 

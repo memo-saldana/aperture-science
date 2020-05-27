@@ -90,7 +90,10 @@ serv.createSession = (user, project, amount) => {
       });
     })
     .then(session => resolve(session))
-    .catch(err => reject(err))
+    .catch(err => {
+      err.name = err.type
+      reject(err)
+    })
   });
 }
 

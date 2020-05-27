@@ -85,6 +85,11 @@ ctr.createSession = () => async (req, res, next) => {
 
   if(!project) throw new MyError(404, "Project not found.");
 
+  console.log('project :>> ', project);
+
+  if(!project.owner) throw new MyError(404, "Owner not found")
+  if(!project.owner.stripeId) throw new MyError(404, "Project owner must connect to stripe in order to receive payments")
+
   const session = await stripe.createSession(user, project, amount);
 
   const donation = new Donation({

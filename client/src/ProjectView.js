@@ -150,6 +150,7 @@ const ProjectView = ({ history, location }) => {
     if(!data.data) {
       toast.error(data);
     } else {
+      console.log('data :>> ', data);
       const sessionId = data.data.sessionId;
       const stripe = await stripePromise;
       const { error } = await stripe.redirectToCheckout({

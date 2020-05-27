@@ -43,6 +43,10 @@ let errorHandler = () => async (err,req,res,next) => {
       console.log('err jwt :>> ', err);  
       next(new MyError(401, 'You need to be logged in to do that.'))
       break;
+
+    case 'StripeInvalidRequestError':
+      next(new MyError(400, err.raw.message))
+      break;
     default:
       console.log('err :', err);
       console.log('=============================')
