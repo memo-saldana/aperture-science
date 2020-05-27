@@ -16,6 +16,8 @@ import FormControl from 'react-bootstrap/FormControl'
 import { useLocation } from "react-router-dom";
 import { URI } from "./config";
 import { loadStripe } from "@stripe/stripe-js";
+import { ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const initialState = {
   title: "",
@@ -53,7 +55,8 @@ const formatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
 });
 
-const ProjectView = () => {
+
+const ProjectView = ({ history, location }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const onChange = e => {
@@ -117,8 +120,15 @@ const ProjectView = () => {
         })
         .catch(error => {
           if (error.response) {
+            if (error.response.statusCode === 401 || error.response.statusCode === 405) {
+                history.push("/login");
+            } 
+            toast.error(error.response.data.message);
             return error.response.data.message;
-          } else return error.message;
+          } else {
+            toast.error("There was an error");
+            return error.message;
+          }
         });
     }
   };
