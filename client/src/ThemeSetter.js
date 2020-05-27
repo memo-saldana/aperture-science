@@ -131,6 +131,10 @@ function ThemeSetter() {
         .page-link {
           color: var(--main-color);
         }
+
+        input {
+          color: var(--main-color);
+        }
       `}
     </style>
   );
