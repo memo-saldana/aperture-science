@@ -103,12 +103,24 @@ const ProjectView = ({ history, location }) => {
       dispatch({ field: "aboutOwner", value: owner.about });
     };
 
-    fetchData();
+    fetchData()
+    .catch(error => {
+      if (error.response) {
+        if (error.response.status === 404) {                
+          history.push("/", {error: 'The project was not found'});
+        } else {
+
+          history.push("/", {error: error.response.data.message})
+        } 
+      } else {
+        history.push('/', {error:"There was an error"});
+      }
+    })
   }, [owner, projectId]);
 
   const _checkoutHandler = _ => {
     if (checkInputs(state)) {
-      console.log('projectId :>> ', projectId);
+      
       localStorage.setItem("lastDonatedProject", projectId);
 
       let { amount } = state;
@@ -120,14 +132,12 @@ const ProjectView = ({ history, location }) => {
         })
         .catch(error => {
           if (error.response) {
-            if (error.response.statusCode === 401 || error.response.statusCode === 405) {
-                history.push("/login");
+            if (error.response.status === 401 || error.response.status === 405) {                
+              history.push("/login", {error: 'You need to be logged in to do that'});
             } 
-            toast.error(error.response.data.message);
             return error.response.data.message;
           } else {
-            toast.error("There was an error");
-            return error.message;
+            return "There was an error";
           }
         });
     }
@@ -136,11 +146,19 @@ const ProjectView = ({ history, location }) => {
   const _checkout = async e => {
     e.preventDefault();
     let data = await _checkoutHandler();
-    const sessionId = data.data.sessionId;
-    const stripe = await stripePromise;
-    const { error } = await stripe.redirectToCheckout({
-      sessionId,
-    });
+    if(!data.data) {
+      toast.error(data);
+    } else {
+      const sessionId = data.data.sessionId;
+      const stripe = await stripePromise;
+      const { error } = await stripe.redirectToCheckout({
+        sessionId,
+      });
+      if(error) {
+        console.log('Stripe error :>> ', error);
+        toast.error("Error with payment broker")
+      }
+    }
   };
 
   const _handleKeyDown = e => {
@@ -152,6 +170,10 @@ const ProjectView = ({ history, location }) => {
   return (
     <Container fluid>
       <Row id="App-Container" className="justify-content-center">
+      <ToastContainer 
+          draggable={false}
+          autoClose={4000}
+        />
         <Container>
           <Row className="mt-3">
             <Container fluid>

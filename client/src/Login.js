@@ -5,10 +5,13 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import Row from "react-bootstrap/Row";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { URI } from "./config";
+import { ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { reducer } from "./CreateProject";
 
 function checkInputs(email, password) {
   if (email !== "" && password !== "") {
@@ -20,15 +23,20 @@ function checkInputs(email, password) {
 const Login = ({ loginHandler }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   let history = useHistory();
+  let location = useLocation();
+
+  useEffect(() => {
+    if(location && location.state && location.state.error != "") {
+      toast.error(location.state.error)
+    }
+  }, []);
 
   const _login = async e => {
     e.preventDefault();
-    setError("");
     let respError = await _loginHandler();
     if (respError) {
-      setError(respError);
+      toast.error(respError);
     } else {
       history.push("/");
     }
@@ -52,7 +60,7 @@ const Login = ({ loginHandler }) => {
             return error.response.data.message;
           } else return error.message;
         });
-    }
+    } else return "One of your credentials is missing"
   };
 
   const _handleKeyDown = e => {
@@ -67,12 +75,15 @@ const Login = ({ loginHandler }) => {
         id="App-Container"
         className="align-items-center justify-content-center"
       >
+        <ToastContainer 
+          draggable={false}
+          autoClose={4000}
+        />
         <Col lg="7">
           <Card>
             <Card.Body>
               <Form className="mb-2">
                 <h1 className="display-4">Log in</h1>
-                <p className="error">{error}</p>
                 <Form.Group controlId="formBasicEmail">
                   <input
                     type="text"

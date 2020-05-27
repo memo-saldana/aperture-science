@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import { URI } from "./config";
 import { ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Container from "react-bootstrap/Container";
 
 const initialState = {
   title: "",
@@ -151,53 +152,59 @@ const CreateProject = () => {
           },
         })
         .then((response) => {
-          return response;
+          return null;
         })
         .catch((error) => {
           if (error.response) {
-            if (error.response.statusCode === 401 || error.response.statusCode === 405) {
-                history.push("/login");
+            if (error.response.status === 401 || error.response.status === 405) {                
+                history.push("/login", {error: 'You need to be logged in to do that'});
             } 
-            toast.error(error.response.data.message);
             return error.response.data.message;
           } else {
-            toast.error("There was an error");
             return error.message;
           }
         });
+    } else {
+      return "One or more of the fields is missing or invalid";
     }
   };
 
   const _postProject = async (e) => {
     e.preventDefault();
-    let respError = await _postHandler();
-    if (respError) {
-      return respError;
+    let response = await _postHandler();
+    if (response) {
+      toast.error(response)
     } else {
       history.push("/");
     }
   };
 
   return (
-    <ProjectForm
-        titleError = {state.titleError}
-        subtitleError = {state.subtitleError}
-        selectedCategoryError = {state.selectedCategoryError}
-        categories = {categories}
-        dateError = {state.dateError}
-        goal = {state.goal}
-        fileURL = {state.fileURL}
-        title = {state.title}
-        subtitle = {state.subtitle}
-        onChange = {onChange}
-        descriptionError = {state.descriptionError}
-        description = {state.description}
-        fileURLError = {state.fileURLError}
-        method = {_postProject}
-        startDate = {startDate}
-        endDate = {endDate}
-        action = "Create"
-    />
+    <Container>
+      <ToastContainer 
+          draggable={false}
+          autoClose={4000}
+        />
+      <ProjectForm
+          titleError = {state.titleError}
+          subtitleError = {state.subtitleError}
+          selectedCategoryError = {state.selectedCategoryError}
+          categories = {categories}
+          dateError = {state.dateError}
+          goal = {state.goal}
+          fileURL = {state.fileURL}
+          title = {state.title}
+          subtitle = {state.subtitle}
+          onChange = {onChange}
+          descriptionError = {state.descriptionError}
+          description = {state.description}
+          fileURLError = {state.fileURLError}
+          method = {_postProject}
+          startDate = {startDate}
+          endDate = {endDate}
+          action = "Create"
+      />
+    </Container>
   );
 };
 

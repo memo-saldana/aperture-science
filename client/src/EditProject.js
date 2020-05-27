@@ -9,6 +9,9 @@ import React, { useReducer, useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { URI } from "./config";
 import ProjectForm from "./ProjectForm";
+import { ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Container from "react-bootstrap/Container";
 
 const initialState = {
   title: "",
@@ -156,48 +159,53 @@ const EditProject = () => {
           },
         })
         .then((response) => {
-          response.success = true
-          return response;
+          return null;
         })
         .catch((error) => {
           if (error.response) {
             return error.response.data.message;
           } else return error.message;
         });
-    } else return {success: false}
+    } else return "One or more of the fields is missing or invalid";
   };
 
   const _editProject = async (e) => {
     e.preventDefault();
     let response = await _editHandler();
-    if (!response.success) {
-      return response;
+    if (response) {
+      toast.error(response);
     } else {
       history.push("/my-projects");
     }
   };
 
   return (
-    <ProjectForm
-      titleError={state.titleError}
-      subtitleError={state.subtitleError}
-      selectedCategory={state.selectedCategory.name}
-      selectedCategoryError={state.selectedCategoryError}
-      categories={categories}
-      dateError={state.dateError}
-      goal={state.goal}
-      fileURL={state.fileURL}
-      title={state.title}
-      subtitle={state.subtitle}
-      onChange={onChange}
-      descriptionError={state.descriptionError}
-      description={state.description}
-      fileURLError={state.fileURLError}
-      method={_editProject}
-      startDate={startDate}
-      endDate={endDate}
-      action="Edit"
-    />
+    <Container>
+      <ToastContainer 
+          draggable={false}
+          autoClose={4000}
+        />
+        <ProjectForm
+          titleError={state.titleError}
+          subtitleError={state.subtitleError}
+          selectedCategory={state.selectedCategory.name}
+          selectedCategoryError={state.selectedCategoryError}
+          categories={categories}
+          dateError={state.dateError}
+          goal={state.goal}
+          fileURL={state.fileURL}
+          title={state.title}
+          subtitle={state.subtitle}
+          onChange={onChange}
+          descriptionError={state.descriptionError}
+          description={state.description}
+          fileURLError={state.fileURLError}
+          method={_editProject}
+          startDate={startDate}
+          endDate={endDate}
+          action="Edit"
+        />
+    </Container>
   );
 };
 
