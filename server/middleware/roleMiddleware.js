@@ -42,12 +42,14 @@ mw.checkLogin = async (req, res, next) =>{
         'Session has expired, login again.'));
   }
 
+  console.log('user in mw :>> ', user);
   if (user) {
+    log("user in check found")
     delete user.tokens;
     delete user.bActive;
     req.user = user;
   }
-  next();
+  return next();
 };
 
 mw.isLoggedIn = async (req, res, next) => {
