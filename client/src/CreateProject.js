@@ -2,6 +2,7 @@ import axios from "axios";
 import { getUserId, getToken } from "./TokenUtilities";
 import ProjectForm from "./ProjectForm";
 import React, { useReducer, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { URI } from "./config";
 
 const initialState = {
@@ -56,17 +57,21 @@ export function checkInputs(state, startDate, endDate, categories) {
   return dateObj;
 };
 
-const CreateProject = ({ history }) => {
+const CreateProject = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [categories, setCategories] = useState([{}]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  let history = useHistory();
 
   useEffect(() => {
     const today = new Date();
     today.setDate(today.getDate() - 1);
     let errorMsg = "";
-
+    console.log("today")
+    console.log(today)
+    console.log("start date")
+    console.log(startDate)
     if (startDate < today && startDate !== "") {
       errorMsg = "Start date must be from today onwards";
     } else if (startDate >= endDate && endDate !== "") {
@@ -179,7 +184,7 @@ const CreateProject = ({ history }) => {
         descriptionError = {state.descriptionError}
         description = {state.description}
         fileURLError = {state.fileURLError}
-        _postProject = {_postProject}
+        method = {_postProject}
         startDate = {startDate}
         endDate = {endDate}
         action = "Create"

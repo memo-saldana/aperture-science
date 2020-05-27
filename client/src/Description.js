@@ -12,9 +12,8 @@ const Description = ({ description, descriptionError, onChange }) => {
           <Form.Control
             as="textarea"
             rows="8"
-            placeholder={
-              description === "" ? "Describe your project..." : description
-            }
+            placeholder="Describe your project..."
+            value={description}
             name="description"
             onChange={onChange}
           />

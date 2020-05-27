@@ -7,7 +7,7 @@ import {
 } from "./CreateProject";
 import { getToken } from "./TokenUtilities";
 import React, { useReducer, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { URI } from "./config";
 import ProjectForm from "./ProjectForm";
 
@@ -31,21 +31,23 @@ export const dateUnParser = (date) => {
     const dateObj = typeof date === "string" ? dateParser(date) : date;
     let year = dateObj.getFullYear();
     let month =
-      dateObj.getMonth() < 10 ? `0${dateObj.getMonth()}` : dateObj.getMonth();
+      dateObj.getMonth() < 10 ? `0${dateObj.getMonth() + 1}` : dateObj.getMonth() + 1;
     let day =
       dateObj.getDate() < 10 ? `0${dateObj.getDate()}` : dateObj.getDate();
+
     return date === "" ? "" : `${year}-${month}-${day}`;
   }
 
   return "";
 };
 
-const EditProject = ({ history }) => {
+const EditProject = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [categories, setCategories] = useState([{}]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  let history = useHistory();
   let location = useLocation();
   const queryString = require("query-string");
   let parsed = queryString.parse(location.search);
@@ -62,27 +64,37 @@ const EditProject = ({ history }) => {
       dispatch({ field: "selectedCategory", value: project.category });
       dispatch({ field: "goal", value: project.goal });
       dispatch({ field: "fileURL", value: project.picture });
-      dispatch({
-        field: "startDate",
-        value: dateUnParser(project.campaignStart),
-      });
-      dispatch({ field: "endDate", value: dateUnParser(project.campaignEnd) });
+
+      let stDate = project.campaignStart;
+      let eDate = project.campaignEnd;
+      setStartDate(dateParser(stDate));
+      setEndDate(dateParser(eDate));
+
+      let categoryData = await axios(`${URI}/api/categories`);
+      const cats = categoryData.data;
+      const updatedCategories = [{ _id: 0, name: "-" }, ...cats];
+      const selectedCat = cats.find((cat) => cat._id === cats[0]._id);
+
+      dispatch({ field: "selectedCategory", value: selectedCat });
+      setCategories(updatedCategories);
     };
 
     fetchProjectData();
   }, [projectId]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      const { data } = await axios(`${URI}/api/categories`);
+    const today = new Date();
+    today.setDate(today.getDate() - 1);
+    let errorMsg = "";
 
-      const updatedCategories = [{ _id: 0, name: "-" }, ...data];
-      dispatch({ field: "selectedCategory", value: updatedCategories[0] });
-      setCategories(updatedCategories);
-    };
+    if (startDate < today && startDate !== "") {
+      errorMsg = "Start date must be from today onwards";
+    } else if (startDate >= endDate && endDate !== "") {
+      errorMsg = "End date should be after start date";
+    }
 
-    fetchCategories();
-  }, []);
+    return dispatch({ field: "dateError", value: errorMsg });
+  }, [startDate, endDate]);
 
   const onChange = (e) => {
     let { name, value } = e.target;
@@ -115,7 +127,7 @@ const EditProject = ({ history }) => {
     }
   };
 
-  const _postHandler = (_) => {
+  const _editHandler = (_) => {
     if (
       checkInputs(state, startDate, endDate, categories) &&
       state.dateError === ""
@@ -148,9 +160,9 @@ const EditProject = ({ history }) => {
     }
   };
 
-  const _postProject = async (e) => {
+  const _editProject = async (e) => {
     e.preventDefault();
-    let respError = await _postHandler();
+    let respError = await _editHandler();
     if (respError) {
       return respError;
     } else {
@@ -162,7 +174,8 @@ const EditProject = ({ history }) => {
     <ProjectForm
       titleError={state.titleError}
       subtitleError={state.subtitleError}
-      selectedCategoryError={state.sele}
+      selectedCategory={state.selectedCategory.name}
+      selectedCategoryError={state.selectedCategoryError}
       categories={categories}
       dateError={state.dateError}
       goal={state.goal}
@@ -173,9 +186,9 @@ const EditProject = ({ history }) => {
       descriptionError={state.descriptionError}
       description={state.description}
       fileURLError={state.fileURLError}
-      _postProject={_postProject}
-      startDate={state.startDate}
-      endDate={state.endDate}
+      method={_editProject}
+      startDate={startDate}
+      endDate={endDate}
       action="Edit"
     />
   );

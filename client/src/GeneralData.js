@@ -11,10 +11,11 @@ const GeneralData = ({
   subtitle,
   subtitleError,
   categories,
+  selectedCategory,
   selectedCategoryError,
   dateError,
   startDate,
-  endDate
+  endDate,
 }) => {
   return (
     <Card className="mt-4">
@@ -28,7 +29,8 @@ const GeneralData = ({
           </Form.Label>
           <Form.Control
             type="text"
-            placeholder={title === "" ? "Title" : title}
+            value = {title}
+            placeholder={"Title"}
             name="title"
             onChange={onChange}
           />
@@ -42,7 +44,8 @@ const GeneralData = ({
           <Form.Control
             as="textarea"
             rows="2"
-            placeholder={subtitle === "" ? "Subtitle" : subtitle}
+            value={subtitle}
+            placeholder={"Subtitle"}
             name="subtitle"
             onChange={onChange}
           />
@@ -56,7 +59,12 @@ const GeneralData = ({
             Category
             <span className="error">{selectedCategoryError}</span>
           </Form.Label>
-          <Form.Control as="select" name="selectedCategory" onChange={onChange}>
+          <Form.Control
+            as="select"
+            name="selectedCategory"
+            value={selectedCategory}
+            onChange={onChange}
+          >
             {categories.map((category, index) => {
               return (
                 <option key={category._id || index}>{category.name}</option>
@@ -69,12 +77,22 @@ const GeneralData = ({
         <Form.Row>
           <Form.Group as={Col} controlId="formProjectDateStart">
             <Form.Label>Campaign Start</Form.Label>
-            <Form.Control type="date" name="startDate" value={dateUnParser(startDate)} onChange={onChange} />
+            <Form.Control
+              type="date"
+              name="startDate"
+              value={dateUnParser(startDate)}
+              onChange={onChange}
+            />
           </Form.Group>
 
           <Form.Group as={Col} controlId="formProjectDateEnd">
             <Form.Label>Campaign End</Form.Label>
-            <Form.Control type="date" name="endDate" value={dateUnParser(endDate)} onChange={onChange} />
+            <Form.Control
+              type="date"
+              name="endDate"
+              value={dateUnParser(endDate)}
+              onChange={onChange}
+            />
           </Form.Group>
         </Form.Row>
       </Card.Body>

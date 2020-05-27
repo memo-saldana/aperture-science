@@ -1,7 +1,7 @@
 import Jumbotron from "react-bootstrap/Jumbotron";
 import React from "react";
 
-const Preview = ({fileURL, title, subtitle}) => {
+const Preview = ({ fileURL, title, subtitle }) => {
   return (
     <Jumbotron
       style={{

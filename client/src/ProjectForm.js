@@ -12,6 +12,7 @@ import React from "react";
 const ProjectForm = ({
   titleError,
   subtitleError,
+  selectedCategory,
   selectedCategoryError,
   categories,
   dateError,
@@ -42,6 +43,7 @@ const ProjectForm = ({
                     subtitle = {subtitle}
                     subtitleError = {subtitleError}
                     categories = {categories}
+                    selectedCategory = {selectedCategory}
                     selectedCategoryError = {selectedCategoryError}
                     dateError = {dateError}
                     startDate = {startDate}

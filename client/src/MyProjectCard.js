@@ -14,7 +14,7 @@ function MyProjectCard({_id, image, title, description, category, completed, day
 
   const goToProject = e => {
     const { value } = e.target;
-    history.push(`/edit-project/?owner=${getUserId()}&&projectId=${value}`)
+    history.push(`/edit-project?owner=${getUserId()}&&projectId=${value}`)
   }
 
   return (

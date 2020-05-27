@@ -111,6 +111,9 @@ projectSchema.statics.getOneById = async function(projectId) {
   percentage = percentage/100
   projectObject.percentage = percentage
 
+  console.log('project :>> ', project);
+  console.log('projectObject :>> ', projectObject);
+
   return projectObject;
 }
 
