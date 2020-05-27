@@ -13,6 +13,7 @@ import { getToken, getUserId } from "./TokenUtilities";
 import Row from "react-bootstrap/Row";
 import InputGroup from 'react-bootstrap/InputGroup'
 import FormControl from 'react-bootstrap/FormControl'
+import { useLocation } from "react-router-dom";
 import { URI } from "./config";
 import { loadStripe } from "@stripe/stripe-js";
 import { ToastContainer, toast} from 'react-toastify';
@@ -54,6 +55,7 @@ const formatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
 });
 
+
 const ProjectView = ({ history, location }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -61,6 +63,7 @@ const ProjectView = ({ history, location }) => {
     dispatch({ field: e.target.name, value: e.target.value });
   };
 
+  let location = useLocation();
   const queryString = require("query-string");
   let parsed = queryString.parse(location.search);
   let { owner, projectId } = parsed;

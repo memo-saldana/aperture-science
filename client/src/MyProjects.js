@@ -71,6 +71,7 @@ const MyProjects = () => {
               <MyProjectCard
                 key={index}
                 image={project.picture}
+                _id={project._id}
                 title={project.title}
                 description={project.subtitle}
                 category={project.category.name}

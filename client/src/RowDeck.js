@@ -15,7 +15,7 @@ const RowDeck = ({ deck, goToProject }) => {
             image={card.picture}
             key={index}
             onClick={goToProject}
-            progress={index * 10}
+            progress={card.percentage}
             title={card.title}
           />
         ))}

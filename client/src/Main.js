@@ -1,14 +1,16 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
-import { URI } from "./config";
 import Home from "./Home";
 import Loading from "./Loading";
+import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import { URI } from "./config";
 
-function Main({ history }) {
+function Main() {
   const [projects, setProjects] = useState([[{ owner: { _id: "" } }]]);
   const [current, setCurrent] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  let history = useHistory();
 
   useEffect(() => {
     const fetchData = async () => {

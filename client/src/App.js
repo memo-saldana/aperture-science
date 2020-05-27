@@ -3,6 +3,7 @@ import AccountPassword from './AccountRecovery_Password';
 import Account from './Account';
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import CreateProject from './CreateProject';
+import EditProject from './EditProject';
 import Failure from './Failure'
 import Home from './Main';
 import Login from './Login';
@@ -34,6 +35,7 @@ function App() {
         <Route path="/create-project" component={CreateProject} />
         <Route path="/account" component={Account} />
         <Route path="/my-projects" component={MyProjects}/>
+        <Route path="/edit-project" component={EditProject}/>
         <Route path="/success" component={Success}/>
         <Route path="/failure" component={Failure}/>
         <Route path="/*" component={Home} />

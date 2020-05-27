@@ -2,9 +2,11 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavButtons from './NavButtons';
 import { getUserId, deleteToken, deleteUserId } from "./TokenUtilities";
 import React from "react";
+import { useHistory } from "react-router-dom";
 
-const TopNavbar = ({ history, status }) => {
+const TopNavbar = ({ status }) => {
 
+    let history = useHistory();
     const _logout = _ => {
         deleteToken();
         deleteUserId();
