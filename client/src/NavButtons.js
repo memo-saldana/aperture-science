@@ -4,7 +4,6 @@ import React from 'react';
 
 const NavButtons = ({ userId,loggedIn, _logout }) => {
     const accountLink = `/account/?accountId=${userId}`
-    console.log(accountLink)
     const loggedInButtons = (
         <Nav className="justify-content-end" style={{ width: "100%" }}>
             <Nav.Link href="/my-projects">My Projects</Nav.Link>

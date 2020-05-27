@@ -9,6 +9,8 @@ import Jumbotron from "react-bootstrap/Jumbotron";
 import React, { useReducer, useEffect, useState } from "react";
 import Row from "react-bootstrap/Row";
 import { URI } from "./config";
+import { ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const initialState = {
   title: "",
@@ -154,8 +156,15 @@ const CreateProject = ({ history }) => {
         })
         .catch((error) => {
           if (error.response) {
+            if (error.response.statusCode === 401 || error.response.statusCode === 405) {
+                history.push("/login");
+            } 
+            toast.error(error.response.data.message);
             return error.response.data.message;
-          } else return error.message;
+          } else {
+            toast.error("There was an error");
+            return error.message;
+          }
         });
     }
   };
