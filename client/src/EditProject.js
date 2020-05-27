@@ -3,7 +3,6 @@ import {
   dateParser,
   whiteSpaceOrEmpty,
   reducer,
-  checkInputs,
 } from "./CreateProject";
 import { getToken } from "./TokenUtilities";
 import React, { useReducer, useEffect, useState } from "react";
@@ -25,6 +24,19 @@ const initialState = {
   fileURL: "",
   fileURLError: "",
 };
+
+
+function checkInputs(state, startDate, endDate, categories) {
+  let data = [state.title, state.subtitle, state.description, state.fileURL];
+  const isvalid = data.every((elem) => whiteSpaceOrEmpty(elem));
+
+  return (
+    isvalid &&
+    startDate !== null &&
+    endDate !== null &&
+    state.dateError === ""
+  );
+}
 
 export const dateUnParser = (date) => {
   if (date !== undefined && date !== null) {
@@ -72,8 +84,8 @@ const EditProject = () => {
 
       let categoryData = await axios(`${URI}/api/categories`);
       const cats = categoryData.data;
-      const updatedCategories = [{ _id: 0, name: "-" }, ...cats];
-      const selectedCat = cats.find((cat) => cat._id === cats[0]._id);
+      const updatedCategories = [...cats];
+      const selectedCat = cats.find((cat) => cat._id === project.category._id);
 
       dispatch({ field: "selectedCategory", value: selectedCat });
       setCategories(updatedCategories);
@@ -104,12 +116,6 @@ const EditProject = () => {
       name === "startDate" ? setStartDate(date) : setEndDate(date);
     } else if (name === "selectedCategory") {
       const selectedCat = categories.find((cat) => cat.name === value);
-      selectedCat === categories[0]
-        ? dispatch({
-            field: name + "Error",
-            value: " Please select a category with value",
-          })
-        : dispatch({ field: name + "Error", value: "" });
       dispatch({ field: name, value: selectedCat });
     } else {
       if (name === "goal") {
@@ -150,6 +156,7 @@ const EditProject = () => {
           },
         })
         .then((response) => {
+          response.success = true
           return response;
         })
         .catch((error) => {
@@ -157,16 +164,16 @@ const EditProject = () => {
             return error.response.data.message;
           } else return error.message;
         });
-    }
+    } else return {success: false}
   };
 
   const _editProject = async (e) => {
     e.preventDefault();
-    let respError = await _editHandler();
-    if (respError) {
-      return respError;
+    let response = await _editHandler();
+    if (!response.success) {
+      return response;
     } else {
-      history.push("/");
+      history.push("/my-projects");
     }
   };
 

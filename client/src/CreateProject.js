@@ -32,7 +32,7 @@ export function whiteSpaceOrEmpty(input) {
   return !/^\s*$/i.test(input);
 }
 
-export function checkInputs(state, startDate, endDate, categories) {
+function checkInputs(state, startDate, endDate, categories) {
   let data = [state.title, state.subtitle, state.description, state.fileURL];
   const isvalid = data.every((elem) => whiteSpaceOrEmpty(elem));
 
