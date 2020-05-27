@@ -70,7 +70,6 @@ serv.createSession = (user, project, amount) => {
   return new Promise((resolve, reject) => {
     serv.getCustomer(user)
     .then(customer => {
-      console.log('customer stripe :>> ', customer);
       return stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [{
