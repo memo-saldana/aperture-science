@@ -7,7 +7,7 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Image from "react-bootstrap/Image";
 import React, { useEffect, useReducer } from "react";
-import { getToken, getUserId } from "./TokenUtilities";
+import { getToken, getUserId, deleteToken, deleteUserId } from "./TokenUtilities";
 import Row from "react-bootstrap/Row";
 import { URI } from "./config";
 import { ToastContainer, toast} from 'react-toastify';
@@ -68,7 +68,18 @@ const Account = ({ history, location }) => {
       dispatch({ field: "userState", value: state })
       dispatch({ field: "finishedFetch", value: true })
     };
-    fetchData();
+    fetchData()
+    .catch(error => {
+      if (error.response) {
+        if (error.response.status === 405) {
+          deleteToken();
+          deleteUserId();
+          history.push("/login", {error: 'Your session expired, pleas log in again'});
+        }
+      } else {
+        history.push("/login", {error: "There was an error with your session, please log in again"})
+      }
+    })
   }, [owner, accountId]);
 
   const _saveUser = _ => {
@@ -77,12 +88,14 @@ const Account = ({ history, location }) => {
         .put(`${URI}/api/users/${accountId}`, { name, about }, { headers: { Authorization: `Bearer ${getToken()}` } })
         .then(response => {
           toast.success("Your account information was saved");
-          return response;
+          return null;
         })
         .catch(error => {
           if (error.response) {
             if (error.response.statusCode === 401 || error.response.statusCode === 405) {
-                history.push("/login");
+                deleteToken();
+                deleteUserId();
+                history.push("/login", {error: 'Your session expired, pleas log in again'});
             } 
             toast.error(error.response.data.message);
             return error.response.data.message;
@@ -112,7 +125,9 @@ const Account = ({ history, location }) => {
           console.log(error);
           if (error.response) {
             if (error.response.statusCode === 401 || error.response.statusCode === 405) {
-              history.push("/login");
+              deleteToken();
+              deleteUserId();
+              history.push("/login", {error: 'Your session expired, pleas log in again'});
             } 
             toast.error(error.response.data.message);
             return error.response.data.message;
@@ -145,7 +160,7 @@ const Account = ({ history, location }) => {
       <>
       <ToastContainer 
         draggable={false}
-        autoClose={8000}
+        autoClose={4000}
       />
       </>
       <Container>

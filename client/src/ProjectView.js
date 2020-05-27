@@ -9,7 +9,7 @@ import Image from "react-bootstrap/Image";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import React, { useEffect, useReducer } from "react";
-import { getToken, getUserId } from "./TokenUtilities";
+import { getToken, getUserId, deleteUserId, deleteToken } from "./TokenUtilities";
 import Row from "react-bootstrap/Row";
 import InputGroup from 'react-bootstrap/InputGroup'
 import FormControl from 'react-bootstrap/FormControl'
@@ -132,7 +132,9 @@ const ProjectView = ({ history, location }) => {
         })
         .catch(error => {
           if (error.response) {
-            if (error.response.status === 401 || error.response.status === 405) {                
+            if (error.response.status === 401 || error.response.status === 405) {
+              deleteToken();
+              deleteUserId();             
               history.push("/login", {error: 'You need to be logged in to do that'});
             } 
             return error.response.data.message;

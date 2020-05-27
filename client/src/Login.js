@@ -30,6 +30,10 @@ const Login = ({ loginHandler }) => {
     if(location && location.state && location.state.error != "") {
       toast.error(location.state.error)
     }
+    if(localStorage.getItem("token")){
+      // Check first if usable, if not stay
+      history.push("/", {success: "You are already logged in."})
+    }
   }, []);
 
   const _login = async e => {
@@ -38,7 +42,7 @@ const Login = ({ loginHandler }) => {
     if (respError) {
       toast.error(respError);
     } else {
-      history.push("/");
+      history.push("/", {success: "Logged in successfully!"});
     }
   };
 

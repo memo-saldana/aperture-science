@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getUserId, getToken } from "./TokenUtilities";
+import { getUserId, getToken, deleteToken, deleteUserId } from "./TokenUtilities";
 import ProjectForm from "./ProjectForm";
 import React, { useReducer, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -156,8 +156,10 @@ const CreateProject = () => {
         })
         .catch((error) => {
           if (error.response) {
-            if (error.response.status === 401 || error.response.status === 405) {                
-                history.push("/login", {error: 'You need to be logged in to do that'});
+            if (error.response.status === 401 || error.response.status === 405) {
+              deleteToken();
+              deleteUserId();               
+              history.push("/login", {error: 'You need to be logged in to do that'});
             } 
             return error.response.data.message;
           } else {

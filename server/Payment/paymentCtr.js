@@ -72,8 +72,8 @@ ctr.createSession = () => async (req, res, next) => {
     if (amount < 1000) throw Error('Negative')
   } catch(e) {
     console.log('e :>> ', e);
-    throw new MyError(400, "You must donate at least $10.00 MXN.")
   }
+  throw new MyError(401, "You must donate at least $10.00 MXN.")
   const user = userId == req.user._id.toString() ? 
     req.user :
     await User.findOne({_id: userId}).exec();

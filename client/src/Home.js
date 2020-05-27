@@ -13,8 +13,13 @@ const Home = ({ projects, goToProject, current, setCurrent, totalPages }) => {
   let location = useLocation();
   
   useEffect(() => {
-    if(location && location.state && location.state.error != "") {
-      toast.error(location.state.error)
+    if(location && location.state) {
+      if(location.state.error != "") {
+        toast.error(location.state.error)
+      }
+      if(location.state.success != "") {
+        toast.success(location.state.success)
+      }
     }
   }, []);
 
