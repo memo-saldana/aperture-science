@@ -109,7 +109,6 @@ const ProjectView = ({ history, location }) => {
         if (error.response.status === 404) {                
           history.push("/", {error: 'The project was not found'});
         } else {
-
           history.push("/", {error: error.response.data.message})
         } 
       } else {
@@ -158,7 +157,7 @@ const ProjectView = ({ history, location }) => {
       });
       if(error) {
         console.log('Stripe error :>> ', error);
-        toast.error("Error with payment broker")
+        toast.error("Error with payment handler")
       }
     }
   };
