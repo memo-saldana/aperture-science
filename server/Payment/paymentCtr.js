@@ -33,6 +33,16 @@ ctr.payProject = () => async (req, res, next) => {
   const event = await stripe.validateWebhook(req);
   
   switch(event.type) {
+    case 'account.application.deauthorized':
+      const id = event.account
+      const user = User.findOne({stripeId: id}).exec()
+
+      if(user) {
+        user.stripeId = undefined;
+        await user.save();
+      }
+      break;
+
     case 'checkout.session.completed':
     case 'payment_intent.succeeded':
       console.log("payment successful");
@@ -75,10 +85,8 @@ ctr.createSession = () => async (req, res, next) => {
 
   if(!project) throw new MyError(404, "Project not found.");
 
-  console.log('project :>> ', project);
-
   const session = await stripe.createSession(user, project, amount);
-  console.log('session donation :>> ', session);
+
   const donation = new Donation({
     donator: user._id,
     project: project._id,

@@ -31,13 +31,14 @@ mw.checkLogin = async (req, res, next) =>{
     return next();
   }
   token = token.split(' ')[1];
-  if(!token || token.length > 0) {
+  if(!token || token.length == 0) {
     return next()
   }
-  console.log('token :>> ', token);
+
   const data = await jwt.verify(token, process.env.JWT_SECRET);
   const user = await User.findById(data._id).select('+role +tokens +bActive').exec();
-  if (user && !user.tokens.includes(token.split(' ')[1])) {
+
+  if (user && !user.tokens.includes(token)) {
     return Promise.reject(new MyError(405,
         'Session has expired, login again.'));
   }
@@ -47,7 +48,7 @@ mw.checkLogin = async (req, res, next) =>{
     delete user.bActive;
     req.user = user;
   }
-  next();
+  return next();
 };
 
 mw.isLoggedIn = async (req, res, next) => {

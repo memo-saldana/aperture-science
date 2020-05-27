@@ -43,8 +43,6 @@ donationSchema.statics.getAmountForProject = async function(projectId) {
     },
   }]).exec();
 
-  console.log('data :>> ', data);
-
   return data.length > 0 ? data[0].total : 0;
 }
 

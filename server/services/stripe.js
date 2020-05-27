@@ -70,7 +70,6 @@ serv.createSession = (user, project, amount) => {
   return new Promise((resolve, reject) => {
     serv.getCustomer(user)
     .then(customer => {
-      console.log('customer stripe :>> ', customer);
       return stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [{
@@ -93,6 +92,15 @@ serv.createSession = (user, project, amount) => {
     .then(session => resolve(session))
     .catch(err => reject(err))
   });
+}
+
+serv.disconnect = async user => {
+  console.log('user :>> ', user);
+  const response = await stripe.oauth.deauthorize({
+    client_id: process.env.STRIPE_CLIENT_ID,
+    stripe_user_id: user.stripeId
+  })
+  return response
 }
 
 module.exports = serv;
