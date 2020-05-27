@@ -95,4 +95,13 @@ serv.createSession = (user, project, amount) => {
   });
 }
 
+serv.disconnect = async user => {
+  console.log('user :>> ', user);
+  const response = await stripe.oauth.deauthorize({
+    client_id: process.env.STRIPE_CLIENT_ID,
+    stripe_user_id: user.stripeId
+  })
+  return response
+}
+
 module.exports = serv;

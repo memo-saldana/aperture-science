@@ -39,6 +39,10 @@ let errorHandler = () => async (err,req,res,next) => {
       next(err)
       break;
       
+    case 'JsonWebTokenError': 
+      console.log('err jwt :>> ', err);  
+      next(new MyError(401, 'You need to be logged in to do that.'))
+      break;
     default:
       console.log('err :', err);
       console.log('=============================')

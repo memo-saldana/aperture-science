@@ -28,27 +28,22 @@ mw.isAdmin = async (req, res, next) =>{
 mw.checkLogin = async (req, res, next) =>{
   let token = req.headers['authorization'];
   if (!token) {
-    console.log("token not found");
     return next();
   }
-  console.log('token :>> ', token);
   token = token.split(' ')[1];
-  console.log('token :>> ', token);
-  if(!token || token.length > 0) {
-    console.log("token mallformed");
+  if(!token || token.length == 0) {
     return next()
   }
-  console.log('token :>> ', token);
+
   const data = await jwt.verify(token, process.env.JWT_SECRET);
   const user = await User.findById(data._id).select('+role +tokens +bActive').exec();
-  if (user && !user.tokens.includes(token.split(' ')[1])) {
+
+  if (user && !user.tokens.includes(token)) {
     return Promise.reject(new MyError(405,
         'Session has expired, login again.'));
   }
 
-  console.log('user in mw :>> ', user);
   if (user) {
-    log("user in check found")
     delete user.tokens;
     delete user.bActive;
     req.user = user;
