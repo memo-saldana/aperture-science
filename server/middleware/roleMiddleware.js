@@ -28,10 +28,12 @@ mw.isAdmin = async (req, res, next) =>{
 mw.checkLogin = async (req, res, next) =>{
   let token = req.headers['authorization'];
   if (!token) {
+    console.log("token not found");
     return next();
   }
   token = token.split(' ')[1];
   if(!token || token.length > 0) {
+    console.log("token mallformed");
     return next()
   }
   console.log('token :>> ', token);
