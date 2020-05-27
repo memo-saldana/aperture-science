@@ -63,7 +63,7 @@ const ProjectView = ({ history, location }) => {
     dispatch({ field: e.target.name, value: e.target.value });
   };
 
-  let location = useLocation();
+  location = useLocation();
   const queryString = require("query-string");
   let parsed = queryString.parse(location.search);
   let { owner, projectId } = parsed;
